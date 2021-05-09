@@ -7,7 +7,7 @@
     GCancellable *cble = g_cancellable_new();
     GError *err = NULL;
 	
-	ESourceRegistry* registry;
+    ESourceRegistry* registry;
 	
     @try {
         registry = e_source_registry_new_sync (cble, &err);
@@ -35,7 +35,7 @@
     @try {
         addressbook = e_source_registry_ref_default_address_book(registry);
         if(addressbook == NULL)		   
-	        @throw [A2SEDSException exceptionWithDescription: @"Could not retrieve default addressbook from Evolution Data Server."];
+            @throw [A2SEDSException exceptionWithDescription: @"Could not retrieve default addressbook from Evolution Data Server."];
 	        
     } @catch (id e) {
         g_free(registry);
