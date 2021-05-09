@@ -1,5 +1,5 @@
 #import <ObjFW/ObjFW.h>
-#import "Exceptions/A2SDescriptionException.h"
+#import "Exceptions/A2SEDSException.h"
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -32,7 +32,7 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	    g_assert((registry != NULL && err == NULL) || (registry == NULL && err != NULL));
 	    
 	    if(err != NULL)				   
-		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    @throw [A2SEDSException exceptionWithDescriptionCString: err->message];
 	    
 	} @catch (id e) {
 	    g_free(registry);
@@ -44,7 +44,7 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	@try {
 	    addressbook = e_source_registry_ref_default_address_book(registry);
 	    if(addressbook == NULL)		   
-		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    @throw [A2SEDSException exceptionWithDescriptionCString: err->message];
 		    
 	} @catch (id e) {
 	    g_free(registry);
@@ -68,7 +68,7 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	    g_assert((client != NULL && err == NULL) || (client == NULL && err != NULL));
 	
 	    if(err != NULL)				   
-		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    @throw [A2SEDSException exceptionWithDescriptionCString: err->message];
 		    
 	} @catch (id e) {
 		g_free(client);
@@ -87,7 +87,7 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	    g_assert((contactsList != NULL && err == NULL) || (contactsList == NULL && err != NULL));
 	
 	    if(err != NULL)				   
-		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    @throw [A2SEDSException exceptionWithDescriptionCString: err->message];
 		    
     } @catch (id e) {
 	    g_free(client);
