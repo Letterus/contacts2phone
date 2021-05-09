@@ -44,8 +44,7 @@
     _description = [OFString stringWithCString: cdescription
                                       encoding: OFStringEncodingUTF8];
 }
-//[OFString stringWithFormat:
-//	    @"The object of type %@ is not open, connected or bound!",
+
 - (OFString *)description
 {
 	return _description;
