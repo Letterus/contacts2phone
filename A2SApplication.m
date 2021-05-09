@@ -31,10 +31,8 @@ OF_APPLICATION_DELEGATE(A2SApplication)
         registry = e_source_registry_new_sync (cble, &err);
 	    g_assert((registry != NULL && err == NULL) || (registry == NULL && err != NULL));
 	    
-	    if(err != NULL) {
-	    	A2SDescriptionException *e = [A2SDescriptionException exceptionWithDescriptionCString: err->message];						   
-		    @throw e;
-	    }
+	    if(err != NULL)				   
+		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
 	    
 	} @catch (id e) {
 	    g_free(registry);
@@ -45,10 +43,9 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	ESource *addressbook;
 	@try {
 	    addressbook = e_source_registry_ref_default_address_book(registry);
-	    if(addressbook == NULL) {
-	    	A2SDescriptionException *e = [A2SDescriptionException exceptionWithDescriptionCString: err->message];							   
-		    @throw e;
-	    }
+	    if(addressbook == NULL) {		   
+		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    
 	} @catch (id e) {
 	    g_free(registry);
 		@throw e;
@@ -70,10 +67,9 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 
 	    g_assert((client != NULL && err == NULL) || (client == NULL && err != NULL));
 	
-	    if(err != NULL) {
-	    	A2SDescriptionException *e = [A2SDescriptionException exceptionWithDescriptionCString: err->message];		
-			@throw e;
-		}
+	    if(err != NULL)				   
+		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    
 	} @catch (id e) {
 		g_free(client);
 		g_error_free (err);
@@ -90,10 +86,9 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	
 	    g_assert((contactsList != NULL && err == NULL) || (contactsList == NULL && err != NULL));
 	
-	    if(err != NULL) {
-	    	A2SDescriptionException *e = [A2SDescriptionException exceptionWithDescriptionCString: err->message];		
-			@throw e;
-	    }
+	    if(err != NULL)				   
+		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
+		    
     } @catch (id e) {
 	    g_free(client);
 	    g_error_free(err);
