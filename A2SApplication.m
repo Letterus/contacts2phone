@@ -43,7 +43,7 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	ESource *addressbook;
 	@try {
 	    addressbook = e_source_registry_ref_default_address_book(registry);
-	    if(addressbook == NULL) {		   
+	    if(addressbook == NULL)		   
 		    @throw [A2SDescriptionException exceptionWithDescriptionCString: err->message];
 		    
 	} @catch (id e) {
