@@ -1,9 +1,5 @@
 #import <ObjFW/ObjFW.h>
 
-#include <glib.h>
-#include <gio/gio.h>
-#include <libebook/libebook.h>
-
 OF_ASSUME_NONNULL_BEGIN
 
 @interface A2SIpPhoneDirectoryEntry : OFObject
