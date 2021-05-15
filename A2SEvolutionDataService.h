@@ -1,5 +1,5 @@
 #import <ObjFW/ObjFW.h>
-#import "Exceptions/A2SEDSException.h"
+#import "Exception/A2SEDSException.h"
 
 #include <glib.h>
 #include <gio/gio.h>
