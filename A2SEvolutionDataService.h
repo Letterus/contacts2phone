@@ -10,10 +10,10 @@ OF_ASSUME_NONNULL_BEGIN
 
 @interface A2SEvolutionDataService : OFObject
 
-- (ESourceRegistry*) retrieveRegistry;
-- (ESource *) retrieveDefaultAddressbookSource;
-- (EBookClient *) retrieveEBookClient;
-- (OFArray *) retrieveContacts;
+@property (nonatomic) ESourceRegistry* registry;
+@property (nonatomic) ESource* defaultAddressbookSource;
+@property (nonatomic) EBookClient* client;
+@property (nonatomic) GSList* contacts;
 
 @end
 
