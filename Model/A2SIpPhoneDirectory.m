@@ -173,6 +173,25 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return nil;
 }
 
+- (OFString *)stringBySerializing
+{
+	void *pool;
+	OFXMLElement *element;
+	OFString *ret;
+
+	pool = objc_autoreleasePoolPush();
+	element = self.XMLElementBySerializing;
+
+	ret = [@"<?xml version='1.0' encoding='UTF-8'?>\n"
+	    stringByAppendingString: [element XMLStringWithIndentation: 2]];
+
+	[ret retain];
+
+	objc_autoreleasePoolPop(pool);
+
+	return [ret autorelease];
+}
+
 - (OFXMLElement *)XMLElementBySerializing
 {
     void *pool = objc_autoreleasePoolPush();
