@@ -79,17 +79,18 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 {
     OFString* home    = [self getEContactField:E_CONTACT_PHONE_HOME fromEContact:econtact];
     OFString* home2   = [self getEContactField:E_CONTACT_PHONE_HOME_2 fromEContact:econtact];
+    OFString* other   = [self getEContactField:E_CONTACT_PHONE_OTHER fromEContact:econtact];
 
     if ([self isValidPhoneField:home]) {
         entry.telephone = home;
-
-        OFLog(@"Telephone number is home, %@", entry.telephone);
         return YES;
 
     } else if ([self isValidPhoneField:home2]) {
         entry.telephone = home2;
+        return YES;
 
-        OFLog(@"Telephone number is home2, %@", entry.telephone);
+    } else if ([self isValidPhoneField:other]) {
+        entry.telephone = other;
         return YES;
     }
 
@@ -104,18 +105,14 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
     if([self isValidPhoneField:business] && ![business isEqual:entry.telephone]) {
         entry.office = business;
-
-        OFLog(@"Office number is business, %@", entry.office);
         return YES;
+
     } else if ([self isValidPhoneField:business2] && ![business2 isEqual:entry.telephone]) {
         entry.office = business2;
-
-        OFLog(@"Office number is business 2, %@", entry.office);
         return YES;
+
     } else if ([self isValidPhoneField:company] && ![company isEqual:entry.telephone]) {
         entry.office = company;
-
-        OFLog(@"Office number is company, %@", entry.office);
         return YES;
     }
     
@@ -124,6 +121,23 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 -(BOOL)addMobileToEntry:(A2SIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
 {
+    OFString* mobile = [self getEContactField:E_CONTACT_PHONE_MOBILE fromEContact:econtact];
+    OFString* pager  = [self getEContactField:E_CONTACT_PHONE_PAGER fromEContact:econtact];
+    OFString* car    = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
+
+    if([self isValidPhoneField:mobile] && ![mobile isEqual:entry.telephone]) {
+        entry.mobile = mobile;
+        return YES;
+
+    } else if ([self isValidPhoneField:pager] && ![pager isEqual:entry.telephone]) {
+        entry.mobile = pager;
+        return YES;
+
+    } else if ([self isValidPhoneField:car] && ![car isEqual:entry.telephone]) {
+        entry.mobile = car;
+        return YES;
+    }
+
     return NO;
 }
 
