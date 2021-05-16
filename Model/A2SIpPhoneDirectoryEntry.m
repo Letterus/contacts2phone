@@ -37,17 +37,23 @@
                                            stringValue:self.name];
     [element addChild:name];
 
-    OFXMLElement *telephone = [OFXMLElement elementWithName: @"Telephone"
-                                           stringValue:self.telephone];
-    [element addChild:telephone];
+    if(self.telephone != nil && self.telephone.length > 0) {
+        OFXMLElement *telephone = [OFXMLElement elementWithName: @"Telephone"
+                                                    stringValue:self.telephone];
+        [element addChild:telephone];
+    }
 
-    OFXMLElement *office = [OFXMLElement elementWithName: @"Office"
-                                           stringValue:self.office];
-    [element addChild:office];
+    if(self.office != nil && self.office.length > 0) {
+        OFXMLElement *office = [OFXMLElement elementWithName: @"Office"
+                                                 stringValue:self.office];
+        [element addChild:office];
+    }
 
-    OFXMLElement *mobile = [OFXMLElement elementWithName: @"Mobile"
-                                           stringValue:self.mobile];
-    [element addChild:mobile];
+    if(self.mobile!= nil && self.mobile.length > 0) {
+        OFXMLElement *mobile = [OFXMLElement elementWithName: @"Mobile"
+                                                 stringValue:self.mobile];
+        [element addChild:mobile];
+    }
 
 	return element;
 }

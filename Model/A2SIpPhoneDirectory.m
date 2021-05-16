@@ -150,7 +150,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 -(BOOL)isValidNameField:(char*) nameField
 {
-    if(nameField != NULL && strcmp(nameField, "") != 0)
+    if(nameField != NULL && strcmp(nameField, "") != 0 && strlen(nameField) <= 23 && strchr(nameField, ',') == NULL)
         return YES;
 
     return NO;
@@ -158,7 +158,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 -(BOOL)isValidPhoneField:(OFString*) phoneField
 {
-    if(phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3)
+    if(phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3 && [phoneField length] <= 21)
         return YES;
 
     return NO;
