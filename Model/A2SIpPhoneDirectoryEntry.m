@@ -1,4 +1,5 @@
 #import "A2SIpPhoneDirectoryEntry.h"
+#include <ObjFW/OFObject.h>
 
 @implementation A2SIpPhoneDirectoryEntry
 
@@ -14,7 +15,7 @@
 	return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [_name release];
     [_telephone release];
@@ -22,6 +23,11 @@
     [_mobile release];
 
     [super dealloc];
+}
+
+- (OFString*)description
+{
+    return [OFString stringWithFormat: @"Directory Entry: Name=%@ Telephone=%@ Office=%@ Mobile=%@", self.name, self.telephone, self.office, self.mobile];
 }
 
 @end

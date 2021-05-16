@@ -20,3 +20,8 @@ $(OBJ)/Exception/%.o: Exception/%.m
 
 $(OBJ)/Model/%.o: Model/%.m
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
+
+build: addr2snom
+
+run: addr2snom
+	./addr2snom

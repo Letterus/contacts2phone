@@ -1,3 +1,4 @@
+#include <ObjFW/OFObject.h>
 #import <ObjFW/ObjFW.h>
 
 OF_ASSUME_NONNULL_BEGIN
@@ -8,6 +9,8 @@ OF_ASSUME_NONNULL_BEGIN
 @property (retain,nonatomic) OFString* telephone;
 @property (retain,nonatomic) OFString* office;
 @property (retain,nonatomic) OFString* mobile;
+
+- (OFString*)description;
 
 @end
 
