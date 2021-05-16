@@ -31,11 +31,23 @@
 
 - (OFXMLElement *)XMLElementBySerializing
 {
-	OFXMLElement *element = [OFXMLElement elementWithName: @"DirectoryEntry"
-				                              stringValue: [OFString stringWithFormat:
-                                    @"\t\t\t<Name>%@</Name>\n\t\t\t<Telephone>%@</Telephone>\n\t\t\t<Office>%@</Office>\n\t\t\t<Mobile>%@</Mobile>\n", 
-                                    self.name, self.telephone, self.office, self.mobile]
-                            ];
+	OFXMLElement *element = [OFXMLElement elementWithName: @"DirectoryEntry"];
+
+    OFXMLElement *name = [OFXMLElement elementWithName: @"Name"
+                                           stringValue:self.name];
+    [element addChild:name];
+
+    OFXMLElement *telephone = [OFXMLElement elementWithName: @"Telephone"
+                                           stringValue:self.telephone];
+    [element addChild:telephone];
+
+    OFXMLElement *office = [OFXMLElement elementWithName: @"Office"
+                                           stringValue:self.office];
+    [element addChild:office];
+
+    OFXMLElement *mobile = [OFXMLElement elementWithName: @"Mobile"
+                                           stringValue:self.mobile];
+    [element addChild:mobile];
 
 	return element;
 }

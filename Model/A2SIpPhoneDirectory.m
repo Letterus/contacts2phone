@@ -1,4 +1,5 @@
 #import "A2SIpPhoneDirectory.h"
+#include <ObjFW/OFKernelEventObserver.h>
 #include <ObjFW/OFMutableString.h>
 #include <ObjFW/OFObject.h>
 #import "A2SIpPhoneDirectoryEntry.h"
@@ -13,7 +14,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 {
 	self = [super init];
 
-	_entries = nil;
+	_entries = [[OFMutableArray alloc] init];
 
 	return self;
 }
@@ -58,8 +59,6 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
         }
 
         [self.entries addObject:newEntry];
-        //FIXME Always 0 ?!
-        OFLog(@"Number of entries: %i", self.entries.count);
 
         OFLog(@"Added to Directory Entry: %@", [newEntry description]);
 
@@ -182,7 +181,6 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
     for(A2SIpPhoneDirectoryEntry *entry in self.entries) {
         [element addChild:entry.XMLElementBySerializing];
-        //OFLog(entry.stringBySerializing);
     }    
 
     [element retain];
