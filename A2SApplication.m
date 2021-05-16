@@ -13,7 +13,6 @@ OF_APPLICATION_DELEGATE(A2SApplication)
     A2SEvolutionDataService *service = [[A2SEvolutionDataService alloc] init];
     A2SIpPhoneDirectory *directory = [[A2SIpPhoneDirectory alloc] init];
     
-
     [directory importFromEvolutionBook: service.contacts];
 
     [OFStdOut writeLine: @"Finished!"];
