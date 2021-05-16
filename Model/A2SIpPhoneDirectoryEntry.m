@@ -1,7 +1,6 @@
 #import "A2SIpPhoneDirectoryEntry.h"
-#include <ObjFW/OFObject.h>
 
-@implementation A2SIpPhoneDirectoryEntry
+@implementation A2SIpPhoneDirectoryEntry 
 
 - (instancetype)init
 {
@@ -15,6 +14,11 @@
 	return self;
 }
 
+- (instancetype)initWithSerialization: (OFXMLElement *)element
+{
+    @throw [OFNotImplementedException exceptionWithSelector:@selector(initWithSerialization) object:self];
+}
+
 - (void)dealloc
 {
     [_name release];
@@ -23,6 +27,17 @@
     [_mobile release];
 
     [super dealloc];
+}
+
+- (OFXMLElement *)XMLElementBySerializing
+{
+	OFXMLElement *element = [OFXMLElement elementWithName: @"DirectoryEntry"
+				                              stringValue: [OFString stringWithFormat:
+                                    @"\t\t\t<Name>%@</Name>\n\t\t\t<Telephone>%@</Telephone>\n\t\t\t<Office>%@</Office>\n\t\t\t<Mobile>%@</Mobile>\n", 
+                                    self.name, self.telephone, self.office, self.mobile]
+                            ];
+
+	return [element autorelease];
 }
 
 - (OFString*)description
