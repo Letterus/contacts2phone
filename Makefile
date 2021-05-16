@@ -1,9 +1,8 @@
-SHELL := /bin/bash
 PATH  := /usr/local/bin:$(PATH)
 CC    := clang
-CFLAGS := `pkg-config --cflags glib-2.0 libedataserver-1.2 libebook-1.2` `objfw-config --cppflags`
-OBJCFLAGS := `objfw-config --objcflags`
-LIBS := `pkg-config --libs glib-2.0 libedataserver-1.2 libebook-1.2` `objfw-config --rpath --libs`
+CFLAGS := $$(pkg-config --cflags glib-2.0 libedataserver-1.2 libebook-1.2) $$(objfw-config --cppflags)
+OBJCFLAGS := $$(objfw-config --objcflags)
+LIBS := $$(pkg-config --libs glib-2.0 libedataserver-1.2 libebook-1.2) $$(objfw-config --rpath --libs)
 
 OBJ := obj
 
@@ -21,4 +20,3 @@ $(OBJ)/Exception/%.o: Exception/%.m
 
 $(OBJ)/Model/%.o: Model/%.m
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
-
