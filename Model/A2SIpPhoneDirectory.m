@@ -58,6 +58,8 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
         }
 
         [self.entries addObject:newEntry];
+        //FIXME Always 0 ?!
+        OFLog(@"Number of entries: %i", self.entries.count);
 
         OFLog(@"Added to Directory Entry: %@", [newEntry description]);
 
@@ -176,14 +178,12 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 {
     void *pool = objc_autoreleasePoolPush();
 
-    OFMutableString* entriesAsXML = [[[OFMutableString init] alloc] autorelease];
+	OFXMLElement *element = [OFXMLElement elementWithName: @"IPPhoneDirectory"];
 
     for(A2SIpPhoneDirectoryEntry *entry in self.entries) {
-        [entriesAsXML appendString:entry.stringBySerializing];
-    }
-
-	OFXMLElement *element = [OFXMLElement elementWithName: @"IPPhoneDirectory"
-				                              stringValue: entriesAsXML];
+        [element addChild:entry.XMLElementBySerializing];
+        //OFLog(entry.stringBySerializing);
+    }    
 
     [element retain];
 
