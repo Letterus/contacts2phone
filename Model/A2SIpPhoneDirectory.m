@@ -1,4 +1,5 @@
 #import "A2SIpPhoneDirectory.h"
+#include <ObjFW/OFMutableString.h>
 #include <ObjFW/OFObject.h>
 #import "A2SIpPhoneDirectoryEntry.h"
 #import "../Exception/A2SEDSException.h"
@@ -15,6 +16,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	_entries = nil;
 
 	return self;
+}
+
+- (instancetype)initWithSerialization: (OFXMLElement *)element
+{
+    @throw [OFNotImplementedException exceptionWithSelector:@selector(initWithSerialization) object:self];
 }
 
 - (void) dealloc
@@ -164,6 +170,26 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
                                   encoding: _encoding];
 
     return nil;
+}
+
+- (OFXMLElement *)XMLElementBySerializing
+{
+    void *pool = objc_autoreleasePoolPush();
+
+    OFMutableString* entriesAsXML = [[[OFMutableString init] alloc] autorelease];
+
+    for(A2SIpPhoneDirectoryEntry *entry in self.entries) {
+        [entriesAsXML appendString:entry.stringBySerializing];
+    }
+
+	OFXMLElement *element = [OFXMLElement elementWithName: @"IPPhoneDirectory"
+				                              stringValue: entriesAsXML];
+
+    [element retain];
+
+	objc_autoreleasePoolPop(pool);
+
+    return [element autorelease];
 }
 
 @end

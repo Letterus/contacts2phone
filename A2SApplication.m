@@ -1,3 +1,4 @@
+#include <ObjFW/OFStdIOStream.h>
 #import <ObjFW/ObjFW.h>
 #import "A2SEvolutionDataService.h"
 #import "Model/A2SIpPhoneDirectory.h"
@@ -15,7 +16,9 @@ OF_APPLICATION_DELEGATE(A2SApplication)
     
     [directory importFromEvolutionBook: service.contacts];
 
-    [OFStdOut writeLine: @"Finished!"];
+    [OFStdOut writeString:directory.stringBySerializing];
+
+    [OFStdErr writeLine: @"Finished!"];
     [OFApplication terminate];
 }
 

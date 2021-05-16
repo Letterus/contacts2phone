@@ -37,7 +37,7 @@
                                     self.name, self.telephone, self.office, self.mobile]
                             ];
 
-	return [element autorelease];
+	return element;
 }
 
 - (OFString*)description

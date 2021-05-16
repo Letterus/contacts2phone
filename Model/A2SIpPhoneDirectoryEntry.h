@@ -11,7 +11,7 @@ OF_ASSUME_NONNULL_BEGIN
 @property (retain,nonatomic) OFString* mobile;
 
 /**
- * @brief The object serialized into an IpPhoneDirectoryEntry XML element.
+ * @brief The object serialized into an DirectoryEntry XML element.
  */
 @property (readonly, nonatomic) OFXMLElement *XMLElementBySerializing;
 
