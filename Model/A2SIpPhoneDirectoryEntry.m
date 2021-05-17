@@ -1,4 +1,6 @@
 #import "A2SIpPhoneDirectoryEntry.h"
+#include <ObjFW/OFString.h>
+#include <ObjFW/OFObject.h>
 
 @implementation A2SIpPhoneDirectoryEntry 
 
@@ -32,28 +34,41 @@
 - (OFXMLElement *)XMLElementBySerializing
 {
 	OFXMLElement *element = [OFXMLElement elementWithName: @"DirectoryEntry"];
+    OFConstantString* emptyString = @"";
 
     OFXMLElement *name = [OFXMLElement elementWithName: @"Name"
                                            stringValue:self.name];
     [element addChild:name];
 
-    if(self.telephone != nil && self.telephone.length > 0) {
-        OFXMLElement *telephone = [OFXMLElement elementWithName: @"Telephone"
-                                                    stringValue:self.telephone];
-        [element addChild:telephone];
-    }
+    OFString* telephoneValue;
+    if(self.telephone != nil && self.telephone.length > 0)
+        telephoneValue = self.telephone;
+    else
+        telephoneValue = emptyString;
 
-    if(self.office != nil && self.office.length > 0) {
-        OFXMLElement *office = [OFXMLElement elementWithName: @"Office"
-                                                 stringValue:self.office];
-        [element addChild:office];
-    }
+    OFXMLElement *telephone = [OFXMLElement elementWithName: @"Telephone"
+                                                stringValue:telephoneValue];
+    [element addChild:telephone];
 
-    if(self.mobile!= nil && self.mobile.length > 0) {
-        OFXMLElement *mobile = [OFXMLElement elementWithName: @"Mobile"
-                                                 stringValue:self.mobile];
-        [element addChild:mobile];
-    }
+    OFString* officeValue;
+    if(self.office != nil && self.office.length > 0)
+        officeValue = self.office;
+    else
+        officeValue = emptyString;
+
+    OFXMLElement *office = [OFXMLElement elementWithName: @"Office"
+                                                stringValue:officeValue];
+    [element addChild:office];
+
+    OFString* mobileValue;
+    if(self.mobile != nil && self.mobile.length > 0)
+        mobileValue = self.mobile;
+    else
+        mobileValue = emptyString;
+    
+    OFXMLElement *mobile = [OFXMLElement elementWithName: @"Mobile"
+                                                stringValue:mobileValue];
+    [element addChild:mobile];
 
 	return element;
 }
