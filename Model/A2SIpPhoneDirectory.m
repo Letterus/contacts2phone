@@ -73,11 +73,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     char* fullname   = (char*) e_contact_get(econtact, E_CONTACT_FULL_NAME);
 
     if([self isValidNameField:familyname]) {
-        entry.name = [OFString stringWithCString: familyname
-                                        encoding: _encoding];
-
         if([self isValidNameField:givenname])
-            entry.name = [entry.name stringByAppendingString:[OFString stringWithFormat:@", %s", givenname]];
+            entry.name = [OFString stringWithFormat:@"%s, %s", familyname, givenname];
+        else
+            entry.name = [OFString stringWithCString: familyname
+                                            encoding: _encoding];
 
     } else if([self isValidNameField:givenname]) {
         entry.name = [OFString stringWithCString: givenname
