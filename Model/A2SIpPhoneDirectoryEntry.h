@@ -1,4 +1,3 @@
-#include <ObjFW/OFObject.h>
 #import <ObjFW/ObjFW.h>
 
 OF_ASSUME_NONNULL_BEGIN

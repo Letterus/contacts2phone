@@ -1,6 +1,4 @@
 #import "A2SIpPhoneDirectoryEntry.h"
-#include <ObjFW/OFString.h>
-#include <ObjFW/OFObject.h>
 
 @implementation A2SIpPhoneDirectoryEntry 
 

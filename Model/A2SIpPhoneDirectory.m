@@ -1,7 +1,4 @@
 #import "A2SIpPhoneDirectory.h"
-#include <ObjFW/OFKernelEventObserver.h>
-#include <ObjFW/OFMutableString.h>
-#include <ObjFW/OFObject.h>
 #import "A2SIpPhoneDirectoryEntry.h"
 #import "../Exception/A2SEDSException.h"
 #include <string.h>
