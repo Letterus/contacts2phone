@@ -41,7 +41,7 @@
     [element addChild:name];
 
     OFString* telephoneValue;
-    if(self.telephone != nil && self.telephone.length > 0)
+    if(self.telephone != nil)
         telephoneValue = self.telephone;
     else
         telephoneValue = emptyString;
@@ -51,7 +51,7 @@
     [element addChild:telephone];
 
     OFString* officeValue;
-    if(self.office != nil && self.office.length > 0)
+    if(self.office != nil)
         officeValue = self.office;
     else
         officeValue = emptyString;
@@ -61,7 +61,7 @@
     [element addChild:office];
 
     OFString* mobileValue;
-    if(self.mobile != nil && self.mobile.length > 0)
+    if(self.mobile != nil)
         mobileValue = self.mobile;
     else
         mobileValue = emptyString;

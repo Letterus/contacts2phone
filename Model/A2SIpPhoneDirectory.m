@@ -68,14 +68,22 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 -(void)addNameToEntry:(A2SIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
 {
-    char* fullname  = (char*) e_contact_get(econtact, E_CONTACT_FULL_NAME);
-    char* givenname = (char*) e_contact_get(econtact, E_CONTACT_GIVEN_NAME);
+    char* familyname = (char*) e_contact_get(econtact, E_CONTACT_FAMILY_NAME);
+    char* givenname  = (char*) e_contact_get(econtact, E_CONTACT_GIVEN_NAME);
+    char* fullname   = (char*) e_contact_get(econtact, E_CONTACT_FULL_NAME);
 
-    if([self isValidNameField:fullname]) {
-        entry.name = [OFString stringWithCString: fullname
+    if([self isValidNameField:familyname]) {
+        entry.name = [OFString stringWithCString: familyname
                                         encoding: _encoding];
+
+        if([self isValidNameField:givenname])
+            entry.name = [entry.name stringByAppendingString:[OFString stringWithFormat:@", %s", givenname]];
+
     } else if([self isValidNameField:givenname]) {
         entry.name = [OFString stringWithCString: givenname
+                                        encoding: _encoding];
+    } else if([self isValidNameField:fullname]) {
+        entry.name = [OFString stringWithCString: fullname
                                         encoding: _encoding];
     } else {
         @throw [A2SEDSException exceptionWithDescription: @"Name fields are empty."];
