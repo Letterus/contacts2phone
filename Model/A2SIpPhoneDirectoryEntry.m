@@ -33,7 +33,7 @@
 
 - (OFXMLElement *)XMLElementBySerializing
 {
-	OFXMLElement *element = [OFXMLElement elementWithName: @"DirectoryEntry"];
+    OFXMLElement *element = [OFXMLElement elementWithName: @"DirectoryEntry"];
     OFConstantString* emptyString = @"";
 
     OFXMLElement *name = [OFXMLElement elementWithName: @"Name"
@@ -69,8 +69,8 @@
     OFXMLElement *mobile = [OFXMLElement elementWithName: @"Mobile"
                                                 stringValue:mobileValue];
     [element addChild:mobile];
-
-	return element;
+    
+    return element;
 }
 
 - (OFString*)description
