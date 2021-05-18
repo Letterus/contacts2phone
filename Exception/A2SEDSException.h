@@ -1,5 +1,5 @@
-#import <ObjFW/ObjFW.h>
 #import "A2SDescriptionException.h"
+#import <ObjFW/ObjFW.h>
 
 OF_ASSUME_NONNULL_BEGIN
 

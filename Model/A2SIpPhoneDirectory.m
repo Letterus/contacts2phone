@@ -1,6 +1,6 @@
 #import "A2SIpPhoneDirectory.h"
-#import "A2SIpPhoneDirectoryEntry.h"
 #import "../Exception/A2SEDSException.h"
+#import "A2SIpPhoneDirectoryEntry.h"
 #include <string.h>
 
 const OFStringEncoding _encoding = OFStringEncodingUTF8;
@@ -9,48 +9,48 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 - (instancetype)init
 {
-	self = [super init];
+    self = [super init];
 
-	_entries = [[OFMutableArray alloc] init];
+    _entries = [[OFMutableArray alloc] init];
 
-	return self;
+    return self;
 }
 
-- (instancetype)initWithSerialization: (OFXMLElement *)element
+- (instancetype)initWithSerialization:(OFXMLElement*)element
 {
     @throw [OFNotImplementedException exceptionWithSelector:@selector(initWithSerialization) object:self];
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [_entries release];
 
     [super dealloc];
 }
 
--(void) importFromEvolutionBook: (GSList*) evolutionContacts
+- (void)importFromEvolutionBook:(GSList*)evolutionContacts
 {
-    for(GSList *element = evolutionContacts; element != NULL; element = element->next) {
-        EContact *econtact = element->data;
+    for (GSList* element = evolutionContacts; element != NULL; element = element->next) {
+        EContact* econtact = element->data;
         BOOL gotPhoneNumber = NO;
 
         A2SIpPhoneDirectoryEntry* newEntry = [[A2SIpPhoneDirectoryEntry alloc] init];
 
         @try {
             [self addNameToEntry:newEntry fromEvolutionContact:econtact];
-            if([self addTelephoneToEntry:newEntry fromEvolutionContact:econtact])
+            if ([self addTelephoneToEntry:newEntry fromEvolutionContact:econtact])
                 gotPhoneNumber = YES;
 
-            if([self addOfficeToEntry:newEntry fromEvolutionContact:econtact])
+            if ([self addOfficeToEntry:newEntry fromEvolutionContact:econtact])
                 gotPhoneNumber = YES;
 
-            if([self addMobileToEntry:newEntry fromEvolutionContact:econtact])
+            if ([self addMobileToEntry:newEntry fromEvolutionContact:econtact])
                 gotPhoneNumber = YES;
 
-            if(!gotPhoneNumber)
-                @throw [A2SEDSException exceptionWithDescription: @"Found no phone number."];
+            if (!gotPhoneNumber)
+                @throw [A2SEDSException exceptionWithDescription:@"Found no phone number."];
 
-        } @catch(id e) {
+        } @catch (id e) {
             [newEntry release];
             continue;
         }
@@ -63,35 +63,35 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     }
 }
 
--(void)addNameToEntry:(A2SIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
+- (void)addNameToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
-    char* familyname = (char*) e_contact_get(econtact, E_CONTACT_FAMILY_NAME);
-    char* givenname  = (char*) e_contact_get(econtact, E_CONTACT_GIVEN_NAME);
-    char* fullname   = (char*) e_contact_get(econtact, E_CONTACT_FULL_NAME);
+    char* familyname = (char*)e_contact_get(econtact, E_CONTACT_FAMILY_NAME);
+    char* givenname = (char*)e_contact_get(econtact, E_CONTACT_GIVEN_NAME);
+    char* fullname = (char*)e_contact_get(econtact, E_CONTACT_FULL_NAME);
 
-    if([self isValidNameField:familyname]) {
-        if([self isValidNameField:givenname])
+    if ([self isValidNameField:familyname]) {
+        if ([self isValidNameField:givenname])
             entry.name = [OFString stringWithFormat:@"%s, %s", familyname, givenname];
         else
-            entry.name = [OFString stringWithCString: familyname
-                                            encoding: _encoding];
+            entry.name = [OFString stringWithCString:familyname
+                                            encoding:_encoding];
 
-    } else if([self isValidNameField:givenname]) {
-        entry.name = [OFString stringWithCString: givenname
-                                        encoding: _encoding];
-    } else if([self isValidNameField:fullname]) {
-        entry.name = [OFString stringWithCString: fullname
-                                        encoding: _encoding];
+    } else if ([self isValidNameField:givenname]) {
+        entry.name = [OFString stringWithCString:givenname
+                                        encoding:_encoding];
+    } else if ([self isValidNameField:fullname]) {
+        entry.name = [OFString stringWithCString:fullname
+                                        encoding:_encoding];
     } else {
-        @throw [A2SEDSException exceptionWithDescription: @"Name fields are empty."];
+        @throw [A2SEDSException exceptionWithDescription:@"Name fields are empty."];
     }
 }
 
--(BOOL)addTelephoneToEntry:(A2SIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
+- (BOOL)addTelephoneToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
-    OFString* home    = [self getEContactField:E_CONTACT_PHONE_HOME fromEContact:econtact];
-    OFString* home2   = [self getEContactField:E_CONTACT_PHONE_HOME_2 fromEContact:econtact];
-    OFString* other   = [self getEContactField:E_CONTACT_PHONE_OTHER fromEContact:econtact];
+    OFString* home = [self getEContactField:E_CONTACT_PHONE_HOME fromEContact:econtact];
+    OFString* home2 = [self getEContactField:E_CONTACT_PHONE_HOME_2 fromEContact:econtact];
+    OFString* other = [self getEContactField:E_CONTACT_PHONE_OTHER fromEContact:econtact];
 
     if ([self isValidPhoneField:home]) {
         entry.telephone = home;
@@ -109,13 +109,13 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return NO;
 }
 
--(BOOL)addOfficeToEntry:(A2SIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
+- (BOOL)addOfficeToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
-    OFString* business   = [self getEContactField:E_CONTACT_PHONE_BUSINESS fromEContact:econtact];
-    OFString* business2  = [self getEContactField:E_CONTACT_PHONE_BUSINESS_2 fromEContact:econtact];
-    OFString* company    = [self getEContactField:E_CONTACT_PHONE_COMPANY fromEContact:econtact];
+    OFString* business = [self getEContactField:E_CONTACT_PHONE_BUSINESS fromEContact:econtact];
+    OFString* business2 = [self getEContactField:E_CONTACT_PHONE_BUSINESS_2 fromEContact:econtact];
+    OFString* company = [self getEContactField:E_CONTACT_PHONE_COMPANY fromEContact:econtact];
 
-    if([self isValidPhoneField:business] && ![business isEqual:entry.telephone]) {
+    if ([self isValidPhoneField:business] && ![business isEqual:entry.telephone]) {
         entry.office = business;
         return YES;
 
@@ -127,17 +127,17 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
         entry.office = company;
         return YES;
     }
-    
+
     return NO;
 }
 
--(BOOL)addMobileToEntry:(A2SIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
+- (BOOL)addMobileToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
     OFString* mobile = [self getEContactField:E_CONTACT_PHONE_MOBILE fromEContact:econtact];
-    OFString* pager  = [self getEContactField:E_CONTACT_PHONE_PAGER fromEContact:econtact];
-    OFString* car    = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
+    OFString* pager = [self getEContactField:E_CONTACT_PHONE_PAGER fromEContact:econtact];
+    OFString* car = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
 
-    if([self isValidPhoneField:mobile] && ![mobile isEqual:entry.telephone]) {
+    if ([self isValidPhoneField:mobile] && ![mobile isEqual:entry.telephone]) {
         entry.mobile = mobile;
         return YES;
 
@@ -153,63 +153,63 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return NO;
 }
 
--(BOOL)isValidNameField:(char*) nameField
+- (BOOL)isValidNameField:(char*)nameField
 {
-    if(nameField != NULL && strcmp(nameField, "") != 0)
+    if (nameField != NULL && strcmp(nameField, "") != 0)
         return YES;
 
     return NO;
 }
 
--(BOOL)isValidPhoneField:(OFString*) phoneField
+- (BOOL)isValidPhoneField:(OFString*)phoneField
 {
-    if(phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3)
+    if (phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3)
         return YES;
 
     return NO;
 }
 
--(OFString*)getEContactField:(EContactField) field fromEContact:(EContact *)econtact
+- (OFString*)getEContactField:(EContactField)field fromEContact:(EContact*)econtact
 {
-    if(e_contact_get(econtact, field) != NULL)
-        return [OFString stringWithCString: (char*) e_contact_get(econtact, field)
-                                  encoding: _encoding];
+    if (e_contact_get(econtact, field) != NULL)
+        return [OFString stringWithCString:(char*)e_contact_get(econtact, field)
+                                  encoding:_encoding];
 
     return nil;
 }
 
-- (OFString *)stringBySerializing
+- (OFString*)stringBySerializing
 {
-	void *pool;
-	OFXMLElement *element;
-	OFString *ret;
+    void* pool;
+    OFXMLElement* element;
+    OFString* ret;
 
-	pool = objc_autoreleasePoolPush();
-	element = self.XMLElementBySerializing;
+    pool = objc_autoreleasePoolPush();
+    element = self.XMLElementBySerializing;
 
-	ret = [@"<?xml version='1.0' encoding='UTF-8'?>\n"
-	    stringByAppendingString: [element XMLStringWithIndentation: 2]];
+    ret = [@"<?xml version='1.0' encoding='UTF-8'?>\n"
+        stringByAppendingString:[element XMLStringWithIndentation:2]];
 
-	[ret retain];
+    [ret retain];
 
-	objc_autoreleasePoolPop(pool);
+    objc_autoreleasePoolPop(pool);
 
-	return [ret autorelease];
+    return [ret autorelease];
 }
 
-- (OFXMLElement *)XMLElementBySerializing
+- (OFXMLElement*)XMLElementBySerializing
 {
-    void *pool = objc_autoreleasePoolPush();
+    void* pool = objc_autoreleasePoolPush();
 
-	OFXMLElement *element = [OFXMLElement elementWithName: @"IPPhoneDirectory"];
+    OFXMLElement* element = [OFXMLElement elementWithName:@"IPPhoneDirectory"];
 
-    for(A2SIpPhoneDirectoryEntry *entry in self.entries) {
+    for (A2SIpPhoneDirectoryEntry* entry in self.entries) {
         [element addChild:entry.XMLElementBySerializing];
-    }    
+    }
 
     [element retain];
 
-	objc_autoreleasePoolPop(pool);
+    objc_autoreleasePoolPop(pool);
 
     return [element autorelease];
 }

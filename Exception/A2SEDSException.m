@@ -2,9 +2,9 @@
 
 @implementation A2SEDSException
 
-- (OFString *)description
+- (OFString*)description
 {
-	return [OFString stringWithFormat: 
-	        @"Evolution Data Server reports error: %@", [super description]];
+    return [OFString stringWithFormat:
+                         @"Evolution Data Server reports error: %@", [super description]];
 }
 @end

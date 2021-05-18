@@ -1,7 +1,7 @@
 #import <ObjFW/ObjFW.h>
 
-#include <glib.h>
 #include <gio/gio.h>
+#include <glib.h>
 #include <libebook/libebook.h>
 
 OF_ASSUME_NONNULL_BEGIN
@@ -13,11 +13,11 @@ OF_ASSUME_NONNULL_BEGIN
 /**
  * @brief The object serialized into an IPPhoneDirectory XML element.
  */
-@property (readonly, nonatomic) OFXMLElement *XMLElementBySerializing;
+@property (readonly, nonatomic) OFXMLElement* XMLElementBySerializing;
 
-- (instancetype)initWithSerialization: (OFXMLElement *)element;
+- (instancetype)initWithSerialization:(OFXMLElement*)element;
 
--(void) importFromEvolutionBook: (GSList*) evolutionContacts;
+- (void)importFromEvolutionBook:(GSList*)evolutionContacts;
 
 @end
 

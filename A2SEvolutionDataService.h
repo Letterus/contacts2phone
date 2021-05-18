@@ -1,10 +1,10 @@
-#import <ObjFW/ObjFW.h>
 #import "Exception/A2SEDSException.h"
+#import <ObjFW/ObjFW.h>
 
-#include <glib.h>
 #include <gio/gio.h>
-#include <libedataserver/libedataserver.h>
+#include <glib.h>
 #include <libebook/libebook.h>
+#include <libedataserver/libedataserver.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
