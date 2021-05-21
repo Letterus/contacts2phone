@@ -196,6 +196,10 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 - (OFMutableString*)cleanPhoneNumber:(OFMutableString*)phoneNumber
 {
+    [phoneNumber replaceOccurrencesOfString:@"(0)" withString:@""];
+    [phoneNumber replaceOccurrencesOfString:@"  " withString:@" "];
+    [phoneNumber replaceOccurrencesOfString:@"(" withString:@""];
+    [phoneNumber replaceOccurrencesOfString:@")" withString:@""];
     [phoneNumber replaceOccurrencesOfString:@"/" withString:@" "];
     [phoneNumber replaceOccurrencesOfString:@"-" withString:@" "];
     [phoneNumber deleteEnclosingWhitespaces];
