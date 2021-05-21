@@ -10,7 +10,16 @@ Execute and redirect stdout output:
 ./addr2snom > Directory.xml
 ```
 
-Upload xml file.
+To save directory file locally.
+
+Use this to upload to your IP DECT base directly (if you have curl installed):
+```
+ ./addr2snom | curl -i -X POST -u <adminuser> -F "Directory=@-" http://<ip address>/UploadFile.html
+```
+
+Replace `<adminuser>` and `<ip address>` by your local values. Hit return.
+
+Insert your admin password. You should see HTML output telling you the settings were saved.
 
 ## Dependencies
 
