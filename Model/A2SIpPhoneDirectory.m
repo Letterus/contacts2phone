@@ -10,11 +10,14 @@
 #import "A2SIpPhoneDirectory.h"
 #import "../Exception/A2SEDSException.h"
 #import "A2SIpPhoneDirectoryEntry.h"
+#include <ObjFW/OFMutableString.h>
 #include <string.h>
 
 const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 @implementation A2SIpPhoneDirectory
+
+# pragma mark - Init methods
 
 - (instancetype)init
 {
@@ -36,6 +39,8 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
     [super dealloc];
 }
+
+# pragma mark - Import methods
 
 - (void)importFromEvolutionBook:(GSList*)evolutionContacts
 {
@@ -72,6 +77,8 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     }
 }
 
+# pragma mark - Private import helper methods
+
 - (void)addNameToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
     char* familyname = (char*)e_contact_get(econtact, E_CONTACT_FAMILY_NAME);
@@ -98,20 +105,20 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 - (BOOL)addTelephoneToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
-    OFString* home = [self getEContactField:E_CONTACT_PHONE_HOME fromEContact:econtact];
-    OFString* home2 = [self getEContactField:E_CONTACT_PHONE_HOME_2 fromEContact:econtact];
-    OFString* other = [self getEContactField:E_CONTACT_PHONE_OTHER fromEContact:econtact];
+    OFMutableString* home = [self getEContactField:E_CONTACT_PHONE_HOME fromEContact:econtact];
+    OFMutableString* home2 = [self getEContactField:E_CONTACT_PHONE_HOME_2 fromEContact:econtact];
+    OFMutableString* other = [self getEContactField:E_CONTACT_PHONE_OTHER fromEContact:econtact];
 
     if ([self isValidPhoneField:home]) {
-        entry.telephone = home;
+        entry.telephone = [self cleanPhoneNumber:home];
         return YES;
 
     } else if ([self isValidPhoneField:home2]) {
-        entry.telephone = home2;
+        entry.telephone = [self cleanPhoneNumber:home2];
         return YES;
 
     } else if ([self isValidPhoneField:other]) {
-        entry.telephone = other;
+        entry.telephone = [self cleanPhoneNumber:other];
         return YES;
     }
 
@@ -120,20 +127,20 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 - (BOOL)addOfficeToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
-    OFString* business = [self getEContactField:E_CONTACT_PHONE_BUSINESS fromEContact:econtact];
-    OFString* business2 = [self getEContactField:E_CONTACT_PHONE_BUSINESS_2 fromEContact:econtact];
-    OFString* company = [self getEContactField:E_CONTACT_PHONE_COMPANY fromEContact:econtact];
+    OFMutableString* business = [self getEContactField:E_CONTACT_PHONE_BUSINESS fromEContact:econtact];
+    OFMutableString* business2 = [self getEContactField:E_CONTACT_PHONE_BUSINESS_2 fromEContact:econtact];
+    OFMutableString* company = [self getEContactField:E_CONTACT_PHONE_COMPANY fromEContact:econtact];
 
     if ([self isValidPhoneField:business] && ![business isEqual:entry.telephone]) {
-        entry.office = business;
+        entry.office = [self cleanPhoneNumber:business];
         return YES;
 
     } else if ([self isValidPhoneField:business2] && ![business2 isEqual:entry.telephone]) {
-        entry.office = business2;
+        entry.office = [self cleanPhoneNumber:business2];
         return YES;
 
     } else if ([self isValidPhoneField:company] && ![company isEqual:entry.telephone]) {
-        entry.office = company;
+        entry.office = [self cleanPhoneNumber:company];
         return YES;
     }
 
@@ -142,24 +149,33 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 - (BOOL)addMobileToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
-    OFString* mobile = [self getEContactField:E_CONTACT_PHONE_MOBILE fromEContact:econtact];
-    OFString* pager = [self getEContactField:E_CONTACT_PHONE_PAGER fromEContact:econtact];
-    OFString* car = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
+    OFMutableString* mobile = [self getEContactField:E_CONTACT_PHONE_MOBILE fromEContact:econtact];
+    OFMutableString* pager = [self getEContactField:E_CONTACT_PHONE_PAGER fromEContact:econtact];
+    OFMutableString* car = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
 
     if ([self isValidPhoneField:mobile] && ![mobile isEqual:entry.telephone]) {
-        entry.mobile = mobile;
+        entry.mobile =  [self cleanPhoneNumber:mobile];
         return YES;
 
     } else if ([self isValidPhoneField:pager] && ![pager isEqual:entry.telephone]) {
-        entry.mobile = pager;
+        entry.mobile =  [self cleanPhoneNumber:pager];
         return YES;
 
     } else if ([self isValidPhoneField:car] && ![car isEqual:entry.telephone]) {
-        entry.mobile = car;
+        entry.mobile =  [self cleanPhoneNumber:car];
         return YES;
     }
 
     return NO;
+}
+
+- (OFMutableString*)getEContactField:(EContactField)field fromEContact:(EContact*)econtact
+{
+    if (e_contact_get(econtact, field) != NULL)
+        return [OFMutableString stringWithCString:(char*)e_contact_get(econtact, field)
+                                         encoding:_encoding];
+
+    return nil;
 }
 
 - (BOOL)isValidNameField:(char*)nameField
@@ -170,7 +186,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return NO;
 }
 
-- (BOOL)isValidPhoneField:(OFString*)phoneField
+- (BOOL)isValidPhoneField:(OFMutableString*)phoneField
 {
     if (phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3)
         return YES;
@@ -178,14 +194,15 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return NO;
 }
 
-- (OFString*)getEContactField:(EContactField)field fromEContact:(EContact*)econtact
+- (OFMutableString*)cleanPhoneNumber:(OFMutableString*)phoneNumber
 {
-    if (e_contact_get(econtact, field) != NULL)
-        return [OFString stringWithCString:(char*)e_contact_get(econtact, field)
-                                  encoding:_encoding];
-
-    return nil;
+    [phoneNumber replaceOccurrencesOfString:@"/" withString:@" "];
+    [phoneNumber replaceOccurrencesOfString:@"-" withString:@" "];
+    [phoneNumber deleteEnclosingWhitespaces];
+    return phoneNumber;
 }
+
+# pragma mark - Serializers
 
 - (OFString*)stringBySerializing
 {
