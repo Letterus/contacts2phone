@@ -1,3 +1,6 @@
+ifeq ($(PREFIX),)
+    PREFIX := /usr/local
+endif
 PATH  := /usr/local/bin:$(PATH)
 CC    := clang
 CFLAGS := $$(pkg-config --cflags glib-2.0 libedataserver-1.2 libebook-1.2) $$(objfw-config --cppflags)
@@ -22,6 +25,10 @@ $(OBJ)/Model/%.o: Model/%.m
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
 
 build: addr2snom
+
+install: addr2snom
+	install -d $(DESTDIR)$(PREFIX)/bin/
+	install -m 755 addr2snom $(DESTDIR)$(PREFIX)/bin/
 
 run: addr2snom
 	./addr2snom
