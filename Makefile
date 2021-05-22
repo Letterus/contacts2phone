@@ -16,19 +16,22 @@ addr2snom: $(OBJECTS)
 	$(CC) $(LIBS) $^ -o $@
 
 $(OBJ)/%.o: %.m
+	@mkdir -p $(@D)
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OBJ)/Exception/%.o: Exception/%.m
+	@mkdir -p $(@D)
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OBJ)/Model/%.o: Model/%.m
+	@mkdir -p $(@D)
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
 
 build: addr2snom
 
 install: addr2snom
-	install -d $(DESTDIR)$(PREFIX)/bin/
-	install -m 755 addr2snom $(DESTDIR)$(PREFIX)/bin/
+	@install -d $(DESTDIR)$(PREFIX)/bin/
+	@install -m 755 addr2snom $(DESTDIR)$(PREFIX)/bin/
 
 run: addr2snom
-	./addr2snom
+	@./addr2snom
