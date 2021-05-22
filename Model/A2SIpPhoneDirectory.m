@@ -8,10 +8,8 @@
  */
 
 #import "A2SIpPhoneDirectory.h"
-#include <ObjFW/OFObject.h>
 #import "../Exception/A2SEDSException.h"
 #import "A2SIpPhoneDirectoryEntry.h"
-#include <ObjFW/OFMutableString.h>
 #include <string.h>
 
 const OFStringEncoding _encoding = OFStringEncodingUTF8;
