@@ -8,6 +8,7 @@
  */
 
 #import "A2SIpPhoneDirectory.h"
+#include <ObjFW/OFObject.h>
 #import "../Exception/A2SEDSException.h"
 #import "A2SIpPhoneDirectoryEntry.h"
 #include <ObjFW/OFMutableString.h>
@@ -52,13 +53,13 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
         @try {
             [self addNameToEntry:newEntry fromEvolutionContact:econtact];
-            if ([self addTelephoneToEntry:newEntry fromEvolutionContact:econtact])
-                gotPhoneNumber = YES;
-
             if ([self addOfficeToEntry:newEntry fromEvolutionContact:econtact])
                 gotPhoneNumber = YES;
 
             if ([self addMobileToEntry:newEntry fromEvolutionContact:econtact])
+                gotPhoneNumber = YES;
+
+            if ([self addTelephoneToEntry:newEntry fromEvolutionContact:econtact])
                 gotPhoneNumber = YES;
 
             if (!gotPhoneNumber)
@@ -105,10 +106,20 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 - (BOOL)addTelephoneToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
+    OFMutableString* primary = [self getEContactField:E_CONTACT_PHONE_PRIMARY fromEContact:econtact];
     OFMutableString* home = [self getEContactField:E_CONTACT_PHONE_HOME fromEContact:econtact];
     OFMutableString* home2 = [self getEContactField:E_CONTACT_PHONE_HOME_2 fromEContact:econtact];
     OFMutableString* other = [self getEContactField:E_CONTACT_PHONE_OTHER fromEContact:econtact];
 
+    if ([self isValidPhoneField:primary]) {
+        primary = [self cleanPhoneNumber:primary];
+        if(![primary isEqual:entry.office] && ![primary isEqual:entry.mobile]) {
+            entry.telephone = primary;
+            return YES;
+        }
+
+    }
+    
     if ([self isValidPhoneField:home]) {
         entry.telephone = [self cleanPhoneNumber:home];
         return YES;
@@ -131,15 +142,15 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     OFMutableString* business2 = [self getEContactField:E_CONTACT_PHONE_BUSINESS_2 fromEContact:econtact];
     OFMutableString* company = [self getEContactField:E_CONTACT_PHONE_COMPANY fromEContact:econtact];
 
-    if ([self isValidPhoneField:business] && ![business isEqual:entry.telephone]) {
+    if ([self isValidPhoneField:business]) {
         entry.office = [self cleanPhoneNumber:business];
         return YES;
 
-    } else if ([self isValidPhoneField:business2] && ![business2 isEqual:entry.telephone]) {
+    } else if ([self isValidPhoneField:business2]) {
         entry.office = [self cleanPhoneNumber:business2];
         return YES;
 
-    } else if ([self isValidPhoneField:company] && ![company isEqual:entry.telephone]) {
+    } else if ([self isValidPhoneField:company]) {
         entry.office = [self cleanPhoneNumber:company];
         return YES;
     }
@@ -153,15 +164,15 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     OFMutableString* pager = [self getEContactField:E_CONTACT_PHONE_PAGER fromEContact:econtact];
     OFMutableString* car = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
 
-    if ([self isValidPhoneField:mobile] && ![mobile isEqual:entry.telephone]) {
+    if ([self isValidPhoneField:mobile]) {
         entry.mobile =  [self cleanPhoneNumber:mobile];
         return YES;
 
-    } else if ([self isValidPhoneField:pager] && ![pager isEqual:entry.telephone]) {
+    } else if ([self isValidPhoneField:pager]) {
         entry.mobile =  [self cleanPhoneNumber:pager];
         return YES;
 
-    } else if ([self isValidPhoneField:car] && ![car isEqual:entry.telephone]) {
+    } else if ([self isValidPhoneField:car]) {
         entry.mobile =  [self cleanPhoneNumber:car];
         return YES;
     }
