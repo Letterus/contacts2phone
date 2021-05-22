@@ -117,7 +117,6 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
             entry.telephone = primary;
             return YES;
         }
-
     }
     
     if ([self isValidPhoneField:home]) {
