@@ -11,18 +11,6 @@
 
 @implementation A2SEvolutionDataService
 
-- (instancetype)init
-{
-    self = [super init];
-
-    _registry = NULL;
-    _defaultAddressbookSource = NULL;
-    _client = NULL;
-    _contacts = NULL;
-
-    return self;
-}
-
 - (void)dealloc
 {
     g_clear_object(&_registry);

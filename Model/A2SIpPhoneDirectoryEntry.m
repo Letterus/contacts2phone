@@ -11,18 +11,6 @@
 
 @implementation A2SIpPhoneDirectoryEntry
 
-- (instancetype)init
-{
-    self = [super init];
-
-    _name = nil;
-    _telephone = nil;
-    _office = nil;
-    _mobile = nil;
-
-    return self;
-}
-
 - (instancetype)initWithSerialization:(OFXMLElement*)element
 {
     @throw [OFNotImplementedException exceptionWithSelector:@selector(initWithSerialization)

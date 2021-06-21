@@ -19,12 +19,12 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 @implementation A2SApplication
 - (void)applicationDidFinishLaunching
 {
-    A2SEvolutionDataService* service = [[A2SEvolutionDataService alloc] init];
-    A2SIpPhoneDirectory* directory = [[A2SIpPhoneDirectory alloc] init];
+    A2SEvolutionDataService* evolutionService = [[A2SEvolutionDataService alloc] init];
+    A2SIpPhoneDirectory* phoneDirectory = [[A2SIpPhoneDirectory alloc] init];
 
-    [directory importFromEvolutionBook:service.contacts];
+    [phoneDirectory importFromEvolutionBook:evolutionService.contacts];
 
-    [OFStdOut writeString:directory.stringBySerializing];
+    [OFStdOut writeString:phoneDirectory.stringBySerializing];
 
     [OFStdErr writeLine:@"Finished!"];
     [OFApplication terminate];
