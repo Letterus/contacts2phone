@@ -28,6 +28,12 @@ Insert your admin password. You should see HTML output telling you the settings 
 - libedataserver-1.2
 - libebook-1.2
 
+Installation for Ubuntu/elementary OS:
+
+```
+sudo apt-get install libglib2.0-dev libedataserver1.2-dev libebook1.2-dev
+```
+
 ## Build dependencies
 
 - clang
