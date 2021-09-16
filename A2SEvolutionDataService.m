@@ -8,6 +8,9 @@
  */
 
 #import "A2SEvolutionDataService.h"
+#include <ObjFW/OFObject.h>
+#include <ObjFW/OFStdIOStream.h>
+#include <ObjFW/OFString.h>
 
 @implementation A2SEvolutionDataService
 
@@ -90,6 +93,15 @@
     ESourceRegistry* registry = self.registry;
     ESource* addressbook;
 
+    /*
+    GList* sources = e_source_registry_list_sources(registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
+    GList* sourceElement;
+    for(sourceElement = sources; sourceElement; sourceElement = sourceElement->next) {
+        addressbook = sourceElement->data;
+        OFLog(@"%s", e_source_get_display_name(addressbook));
+    }
+    */
+
     @try {
         addressbook = e_source_registry_ref_default_address_book(registry);
         if (addressbook == NULL)
@@ -142,12 +154,15 @@
     @try {
         e_book_client_get_contacts_sync(client, sexp, &contactsList, cble, &err);
 
-        g_assert((contactsList != NULL && err == NULL) || (contactsList == NULL && err != NULL));
+        //g_assert((contactsList != NULL && err == NULL) || (contactsList == NULL && err != NULL));
+
+        if (contactsList == NULL)
+             @throw [A2SDescriptionException exceptionWithDescription: [OFString stringWithFormat:@"Could not get any contacts from addressbook: %s", e_source_get_display_name(self.defaultAddressbookSource)]];
 
         if (err != NULL)
             @throw [A2SEDSException exceptionWithDescriptionCString:err->message];
 
-    } @catch (id e) {
+    } @catch (A2SEDSException* e) {
         g_clear_object(&client);
         g_error_free(err);
         @throw e;
