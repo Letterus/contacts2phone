@@ -17,7 +17,7 @@
 OF_APPLICATION_DELEGATE(A2SApplication)
 
 @implementation A2SApplication
-- (void)applicationDidFinishLaunching
+- (void)applicationDidFinishLaunching:(OFNotification*)notification;
 {
     A2SEvolutionDataService* evolutionService = [[A2SEvolutionDataService alloc] init];
     A2SIpPhoneDirectory* phoneDirectory = [[A2SIpPhoneDirectory alloc] init];
