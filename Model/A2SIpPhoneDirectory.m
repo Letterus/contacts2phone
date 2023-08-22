@@ -10,13 +10,12 @@
 #import "A2SIpPhoneDirectory.h"
 #import "../Exception/A2SEDSException.h"
 #import "A2SIpPhoneDirectoryEntry.h"
-#include <string.h>
 
 const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 @implementation A2SIpPhoneDirectory
 
-# pragma mark - Init methods
+#pragma mark - Init methods
 
 - (instancetype)init
 {
@@ -27,11 +26,6 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return self;
 }
 
-- (instancetype)initWithSerialization:(OFXMLElement*)element
-{
-    @throw [OFNotImplementedException exceptionWithSelector:@selector(initWithSerialization) object:self];
-}
-
 - (void)dealloc
 {
     [_entries release];
@@ -39,7 +33,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     [super dealloc];
 }
 
-# pragma mark - Import methods
+#pragma mark - Import methods
 
 - (void)importFromEvolutionBook:(GSList*)evolutionContacts
 {
@@ -76,7 +70,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     }
 }
 
-# pragma mark - Private import helper methods
+#pragma mark - Private import helper methods
 
 - (void)addNameToEntry:(A2SIpPhoneDirectoryEntry*)entry fromEvolutionContact:(EContact*)econtact
 {
@@ -111,12 +105,12 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
     if ([self isValidPhoneField:primary]) {
         primary = [self cleanPhoneNumber:primary];
-        if(![primary isEqual:entry.office] && ![primary isEqual:entry.mobile]) {
+        if (![primary isEqual:entry.office] && ![primary isEqual:entry.mobile]) {
             entry.telephone = primary;
             return YES;
         }
     }
-    
+
     if ([self isValidPhoneField:home]) {
         entry.telephone = [self cleanPhoneNumber:home];
         return YES;
@@ -162,15 +156,15 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     OFMutableString* car = [self getEContactField:E_CONTACT_PHONE_CAR fromEContact:econtact];
 
     if ([self isValidPhoneField:mobile]) {
-        entry.mobile =  [self cleanPhoneNumber:mobile];
+        entry.mobile = [self cleanPhoneNumber:mobile];
         return YES;
 
     } else if ([self isValidPhoneField:pager]) {
-        entry.mobile =  [self cleanPhoneNumber:pager];
+        entry.mobile = [self cleanPhoneNumber:pager];
         return YES;
 
     } else if ([self isValidPhoneField:car]) {
-        entry.mobile =  [self cleanPhoneNumber:car];
+        entry.mobile = [self cleanPhoneNumber:car];
         return YES;
     }
 
@@ -215,7 +209,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     return phoneNumber;
 }
 
-# pragma mark - Serializers
+#pragma mark - Serializers
 
 - (OFString*)stringBySerializing
 {

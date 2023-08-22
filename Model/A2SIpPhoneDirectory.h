@@ -15,7 +15,7 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SIpPhoneDirectory : OFObject <OFSerialization>
+@interface A2SIpPhoneDirectory : OFObject
 
 @property (retain, nonatomic) OFMutableArray* entries;
 
@@ -24,7 +24,7 @@ OF_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, nonatomic) OFXMLElement* XMLElementBySerializing;
 
-- (instancetype)initWithSerialization:(OFXMLElement*)element;
+- (OFString*)stringBySerializing;
 
 - (void)importFromEvolutionBook:(GSList*)evolutionContacts;
 

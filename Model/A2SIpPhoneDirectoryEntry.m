@@ -11,12 +11,6 @@
 
 @implementation A2SIpPhoneDirectoryEntry
 
-- (instancetype)initWithSerialization:(OFXMLElement*)element
-{
-    @throw [OFNotImplementedException exceptionWithSelector:@selector(initWithSerialization)
-                                                     object:self];
-}
-
 - (void)dealloc
 {
     [_name release];

@@ -11,7 +11,7 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SIpPhoneDirectoryEntry : OFObject <OFSerialization>
+@interface A2SIpPhoneDirectoryEntry : OFObject
 
 @property (retain, nonatomic) OFString* name;
 @property (retain, nonatomic) OFMutableString* telephone;
@@ -22,8 +22,6 @@ OF_ASSUME_NONNULL_BEGIN
  * @brief The object serialized into an DirectoryEntry XML element.
  */
 @property (readonly, nonatomic) OFXMLElement* XMLElementBySerializing;
-
-- (instancetype)initWithSerialization:(OFXMLElement*)element;
 
 - (OFString*)description;
 
