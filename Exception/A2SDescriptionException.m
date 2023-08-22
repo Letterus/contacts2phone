@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Johannes Brakensiek <letterus at codingpastor.de>
+ * Copyright 2021-2023 Johannes Brakensiek <letterus at devbeejohn.de>
  *
  * This software is licensed under the GNU General Public License
  * (version 2.0 or later). See the LICENSE file in this distribution.
@@ -13,49 +13,50 @@
 
 @synthesize description = _description;
 
-+ (instancetype)exceptionWithDescription:(OFString*)description
++ (instancetype)exceptionWithDescription:(OFString *)description
 {
-    return [[[self alloc] initWithDescription:description] autorelease];
+	return [[[self alloc] initWithDescription:description] autorelease];
 }
 
-+ (instancetype)exceptionWithDescriptionCString:(char*)cdescription
++ (instancetype)exceptionWithDescriptionCString:(char *)cdescription
 {
-    return [[[self alloc] initWithDescriptionCString:cdescription] autorelease];
+	return [[[self alloc] initWithDescriptionCString:cdescription]
+	    autorelease];
 }
 
-- (instancetype)initWithDescription:(OFString*)description
+- (instancetype)initWithDescription:(OFString *)description
 {
-    self = [super init];
+	self = [super init];
 
-    _description = description;
+	_description = description;
 
-    return self;
+	return self;
 }
 
-- (instancetype)initWithDescriptionCString:(char*)cdescription
+- (instancetype)initWithDescriptionCString:(char *)cdescription
 {
-    self = [super init];
+	self = [super init];
 
-    _description = [OFString stringWithCString:cdescription
-                                      encoding:OFStringEncodingUTF8];
+	_description = [OFString stringWithCString:cdescription
+	                                  encoding:OFStringEncodingUTF8];
 
-    return self;
+	return self;
 }
 
-- (void)setDescription:(OFString*)description
+- (void)setDescription:(OFString *)description
 {
-    _description = description;
-    [description autorelease];
+	_description = description;
+	[description autorelease];
 }
 
-- (void)setDescriptionCString:(char*)cdescription
+- (void)setDescriptionCString:(char *)cdescription
 {
-    _description = [OFString stringWithCString:cdescription
-                                      encoding:OFStringEncodingUTF8];
+	_description = [OFString stringWithCString:cdescription
+	                                  encoding:OFStringEncodingUTF8];
 }
 
-- (OFString*)description
+- (OFString *)description
 {
-    return _description;
+	return _description;
 }
 @end
