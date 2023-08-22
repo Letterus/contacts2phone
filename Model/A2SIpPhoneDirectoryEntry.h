@@ -11,19 +11,19 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SIpPhoneDirectoryEntry : OFObject
+@interface A2SIpPhoneDirectoryEntry: OFObject
 
-@property (retain, nonatomic) OFString* name;
-@property (retain, nonatomic) OFMutableString* telephone;
-@property (retain, nonatomic) OFMutableString* office;
-@property (retain, nonatomic) OFMutableString* mobile;
+@property (retain, nonatomic) OFString *name;
+@property (retain, nonatomic) OFMutableString *telephone;
+@property (retain, nonatomic) OFMutableString *office;
+@property (retain, nonatomic) OFMutableString *mobile;
 
 /**
  * @brief The object serialized into an DirectoryEntry XML element.
  */
-@property (readonly, nonatomic) OFXMLElement* XMLElementBySerializing;
+@property (readonly, nonatomic) OFXMLElement *XMLElementBySerializing;
 
-- (OFString*)description;
+- (OFString *)description;
 
 @end
 

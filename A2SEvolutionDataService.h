@@ -17,12 +17,12 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SEvolutionDataService : OFObject
+@interface A2SEvolutionDataService: OFObject
 
-@property (nonatomic) ESourceRegistry* registry;
-@property (nonatomic) ESource* defaultAddressbookSource;
-@property (nonatomic) EBookClient* client;
-@property (nonatomic) GSList* contacts;
+@property (nonatomic) ESourceRegistry *registry;
+@property (nonatomic) ESource *defaultAddressbookSource;
+@property (nonatomic) EBookClient *client;
+@property (nonatomic) GSList *contacts;
 
 @end
 

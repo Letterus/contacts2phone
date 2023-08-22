@@ -11,23 +11,25 @@
 #import "Model/A2SIpPhoneDirectory.h"
 #import <ObjFW/ObjFW.h>
 
-@interface A2SApplication : OFObject <OFApplicationDelegate>
+@interface A2SApplication: OFObject <OFApplicationDelegate>
 @end
 
 OF_APPLICATION_DELEGATE(A2SApplication)
 
 @implementation A2SApplication
-- (void)applicationDidFinishLaunching:(OFNotification*)notification
+- (void)applicationDidFinishLaunching:(OFNotification *)notification
 {
-    A2SEvolutionDataService* evolutionService = [[A2SEvolutionDataService alloc] init];
-    A2SIpPhoneDirectory* phoneDirectory = [[A2SIpPhoneDirectory alloc] init];
+	A2SEvolutionDataService *evolutionService =
+	    [[A2SEvolutionDataService alloc] init];
+	A2SIpPhoneDirectory *phoneDirectory =
+	    [[A2SIpPhoneDirectory alloc] init];
 
-    [phoneDirectory importFromEvolutionBook:evolutionService.contacts];
+	[phoneDirectory importFromEvolutionBook:evolutionService.contacts];
 
-    [OFStdOut writeString:phoneDirectory.stringBySerializing];
+	[OFStdOut writeString:phoneDirectory.stringBySerializing];
 
-    [OFStdErr writeLine:@"Finished!"];
-    [OFApplication terminate];
+	[OFStdErr writeLine:@"Finished!"];
+	[OFApplication terminate];
 }
 
 @end

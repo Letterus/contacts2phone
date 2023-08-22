@@ -169,3 +169,4 @@ dkms.conf
 
 addr2snom
 Directory.xml
+*.sublime-workspace

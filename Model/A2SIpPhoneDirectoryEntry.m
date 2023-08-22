@@ -13,60 +13,63 @@
 
 - (void)dealloc
 {
-    [_name release];
-    [_telephone release];
-    [_office release];
-    [_mobile release];
+	[_name release];
+	[_telephone release];
+	[_office release];
+	[_mobile release];
 
-    [super dealloc];
+	[super dealloc];
 }
 
-- (OFXMLElement*)XMLElementBySerializing
+- (OFXMLElement *)XMLElementBySerializing
 {
-    OFXMLElement* element = [OFXMLElement elementWithName:@"DirectoryEntry"];
-    OFConstantString* emptyString = @"";
+	OFXMLElement *element =
+	    [OFXMLElement elementWithName:@"DirectoryEntry"];
+	OFConstantString *emptyString = @"";
 
-    OFXMLElement* name = [OFXMLElement elementWithName:@"Name"
-                                           stringValue:self.name];
-    [element addChild:name];
+	OFXMLElement *name = [OFXMLElement elementWithName:@"Name"
+	                                       stringValue:self.name];
+	[element addChild:name];
 
-    OFString* telephoneValue;
-    if (self.telephone != nil)
-        telephoneValue = self.telephone;
-    else
-        telephoneValue = emptyString;
+	OFString *telephoneValue;
+	if (self.telephone != nil)
+		telephoneValue = self.telephone;
+	else
+		telephoneValue = emptyString;
 
-    OFXMLElement* telephone = [OFXMLElement elementWithName:@"Telephone"
-                                                stringValue:telephoneValue];
-    [element addChild:telephone];
+	OFXMLElement *telephone = [OFXMLElement elementWithName:@"Telephone"
+	                                            stringValue:telephoneValue];
+	[element addChild:telephone];
 
-    OFString* officeValue;
-    if (self.office != nil)
-        officeValue = self.office;
-    else
-        officeValue = emptyString;
+	OFString *officeValue;
+	if (self.office != nil)
+		officeValue = self.office;
+	else
+		officeValue = emptyString;
 
-    OFXMLElement* office = [OFXMLElement elementWithName:@"Office"
-                                             stringValue:officeValue];
-    [element addChild:office];
+	OFXMLElement *office = [OFXMLElement elementWithName:@"Office"
+	                                         stringValue:officeValue];
+	[element addChild:office];
 
-    OFString* mobileValue;
-    if (self.mobile != nil)
-        mobileValue = self.mobile;
-    else
-        mobileValue = emptyString;
+	OFString *mobileValue;
+	if (self.mobile != nil)
+		mobileValue = self.mobile;
+	else
+		mobileValue = emptyString;
 
-    OFXMLElement* mobile = [OFXMLElement elementWithName:@"Mobile"
-                                             stringValue:mobileValue];
-    [element addChild:mobile];
+	OFXMLElement *mobile = [OFXMLElement elementWithName:@"Mobile"
+	                                         stringValue:mobileValue];
+	[element addChild:mobile];
 
-    return element;
+	return element;
 }
 
-- (OFString*)description
+- (OFString *)description
 {
-    return [OFString stringWithFormat:@"Directory Entry: Name=%@ Telephone=%@ Office=%@ Mobile=%@",
-                     self.name, self.telephone, self.office, self.mobile];
+	return [OFString
+	    stringWithFormat:
+	        @"Directory Entry: Name=%@ Telephone=%@ Office=%@ Mobile=%@",
+	    self.name, self.telephone, self.office, self.mobile];
 }
 
 @end
