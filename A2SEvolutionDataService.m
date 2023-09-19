@@ -13,9 +13,9 @@
 
 - (void)dealloc
 {
-	g_clear_object(&_registry);
-	g_clear_object(&_defaultAddressbookSource);
-	g_clear_object(&_client);
+	[_registry release];
+	[_defaultAddressbookSource release];
+	[_client release];
 	g_slist_free_full(_contacts, g_object_unref);
 
 	[super dealloc];
@@ -23,7 +23,7 @@
 
 #pragma mark - Property getters
 
-- (ESourceRegistry *)registry
+- (OGESourceRegistry *)registry
 {
 	if (_registry != NULL)
 		return _registry;
@@ -32,7 +32,7 @@
 	return _registry;
 }
 
-- (ESource *)defaultAddressbookSource
+- (OGESource *)defaultAddressbookSource
 {
 	if (_defaultAddressbookSource != NULL)
 		return _defaultAddressbookSource;
@@ -41,7 +41,7 @@
 	return _defaultAddressbookSource;
 }
 
-- (EBookClient *)client
+- (OGEBookClient *)client
 {
 	if (_client != NULL)
 		return _client;
@@ -61,36 +61,25 @@
 
 #pragma mark - Private methods - fetching data from EDS
 
-- (ESourceRegistry *)retrieveRegistry
+- (OGESourceRegistry *)retrieveRegistry
 {
 	GCancellable *cble = g_cancellable_new();
-	GError *err = NULL;
-
-	ESourceRegistry *registry;
+	OGESourceRegistry *registry;
 
 	@try {
-		registry = e_source_registry_new_sync(cble, &err);
-		g_assert((registry != NULL && err == NULL) ||
-		    (registry == NULL && err != NULL));
-
-		if (err != NULL)
-			@throw [A2SEDSException
-			    exceptionWithDescriptionCString:err->message];
-
+		registry = [[OGESourceRegistry alloc] initSync:cble];
 	} @catch (id e) {
-		g_clear_object(&registry);
-		registry = NULL;
-		g_error_free(err);
+		[registry release];
 		@throw e;
 	}
 
 	return registry;
 }
 
-- (ESource *)retrieveDefaultAddressbookSource
+- (OGESource *)retrieveDefaultAddressbookSource
 {
-	ESourceRegistry *registry = self.registry;
-	ESource *addressbook;
+	OGESourceRegistry *registry = self.registry;
+	OGESource *addressbook;
 
 	/*
 	GList* sources = e_source_registry_list_sources(registry,
@@ -101,47 +90,25 @@
 	}
 	*/
 
-	@try {
-		addressbook =
-		    e_source_registry_ref_default_address_book(registry);
-		if (addressbook == NULL)
-			@throw [A2SEDSException
-			    exceptionWithDescription:
-			        @"Could not retrieve default addressbook from "
-			        @"Evolution Data Server."];
-
-	} @catch (id e) {
-		g_clear_object(&registry);
-		registry = NULL;
-		@throw e;
-	}
+	addressbook = [self.registry refDefaultAddressBook];
 
 	return addressbook;
 }
 
-- (EBookClient *)retrieveEBookClient
+- (OGEBookClient *)retrieveEBookClient
 {
-	ESource *addressbook = self.defaultAddressbookSource;
-	EBookClient *client;
+	OGESource *addressbook = self.defaultAddressbookSource;
+	OGEBookClient *client;
 
 	GCancellable *cble = g_cancellable_new();
 	GError *err = NULL;
 
 	@try {
-		client = (EBookClient *)e_book_client_connect_sync(
-		    addressbook, 5, cble, &err);
-
-		g_assert((client != NULL && err == NULL) ||
-		    (client == NULL && err != NULL));
-
-		if (err != NULL)
-			@throw [A2SEDSException
-			    exceptionWithDescriptionCString:err->message];
-
+		client = [OGEBookClient connectSyncWithSource:addressbook
+		                      waitForConnectedSeconds:5
+		                                  cancellable:cble];
 	} @catch (id e) {
-		g_clear_object(&client);
-		client = NULL;
-		g_error_free(err);
+		[client release];
 		@throw e;
 	}
 
@@ -150,19 +117,16 @@
 
 - (GSList *)retrieveContacts
 {
-	EBookClient *client = self.client;
+	OGEBookClient *client = self.client;
 
 	GSList *contactsList = NULL;
-	const gchar *sexp = "";
+	OFString *sexp = @"";
 	GCancellable *cble = g_cancellable_new();
-	GError *err = NULL;
 
 	@try {
-		e_book_client_get_contacts_sync(
-		    client, sexp, &contactsList, cble, &err);
-
-		// g_assert((contactsList != NULL && err == NULL) ||
-		// (contactsList == NULL && err != NULL));
+		[client contactsSyncWithSexp:sexp
+		                 outContacts:&contactsList
+		                 cancellable:cble];
 
 		if (contactsList == NULL)
 			@throw [A2SDescriptionException
@@ -170,16 +134,11 @@
 			        [OFString stringWithFormat:
 			                      @"Could not get any contacts "
 			                      @"from addressbook: %s",
-			                  e_source_get_display_name(
-			                      self.defaultAddressbookSource)]];
+			                  [self.defaultAddressbookSource
+			                          displayName]]];
 
-		if (err != NULL)
-			@throw [A2SEDSException
-			    exceptionWithDescriptionCString:err->message];
-
-	} @catch (A2SEDSException *e) {
-		g_clear_object(&client);
-		g_error_free(err);
+	} @catch (id e) {
+		[client release];
 		@throw e;
 	}
 
