@@ -132,7 +132,7 @@
 		        [OFString
 		            stringWithFormat:@"Could not get any contacts "
 		                             @"from addressbook: %s",
-		            [self.defaultAddressbookSource displayName]]];
+		            self.defaultAddressbookSource.displayName]];
 
 	return contactsList;
 }
