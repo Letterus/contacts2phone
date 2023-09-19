@@ -101,7 +101,6 @@
 	OGEBookClient *client;
 
 	GCancellable *cble = g_cancellable_new();
-	GError *err = NULL;
 
 	@try {
 		client = [OGEBookClient connectSyncWithSource:addressbook
@@ -123,24 +122,17 @@
 	OFString *sexp = @"";
 	GCancellable *cble = g_cancellable_new();
 
-	@try {
-		[client contactsSyncWithSexp:sexp
-		                 outContacts:&contactsList
-		                 cancellable:cble];
+	[client contactsSyncWithSexp:sexp
+	                 outContacts:&contactsList
+	                 cancellable:cble];
 
-		if (contactsList == NULL)
-			@throw [A2SDescriptionException
-			    exceptionWithDescription:
-			        [OFString stringWithFormat:
-			                      @"Could not get any contacts "
-			                      @"from addressbook: %s",
-			                  [self.defaultAddressbookSource
-			                          displayName]]];
-
-	} @catch (id e) {
-		[client release];
-		@throw e;
-	}
+	if (contactsList == NULL)
+		@throw [A2SDescriptionException
+		    exceptionWithDescription:
+		        [OFString
+		            stringWithFormat:@"Could not get any contacts "
+		                             @"from addressbook: %s",
+		            [self.defaultAddressbookSource displayName]]];
 
 	return contactsList;
 }
