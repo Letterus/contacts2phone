@@ -37,7 +37,7 @@
 	if (_defaultAddressbookSource != nil)
 		return _defaultAddressbookSource;
 
-	_defaultAddressbookSource = [self retrieveDefaultAddressbookSource];
+	_defaultAddressbookSource = self.registry.refDefaultAddressBook;
 	return _defaultAddressbookSource;
 }
 
@@ -74,11 +74,6 @@
 	}
 
 	return registry;
-}
-
-- (OGESource *)retrieveDefaultAddressbookSource
-{
-	return self.registry.refDefaultAddressBook;
 }
 
 - (OGEBookClient *)retrieveEBookClient
