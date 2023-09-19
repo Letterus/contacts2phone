@@ -25,7 +25,7 @@
 
 - (OGESourceRegistry *)registry
 {
-	if (_registry != NULL)
+	if (_registry != nil)
 		return _registry;
 
 	_registry = [self retrieveRegistry];
@@ -34,7 +34,7 @@
 
 - (OGESource *)defaultAddressbookSource
 {
-	if (_defaultAddressbookSource != NULL)
+	if (_defaultAddressbookSource != nil)
 		return _defaultAddressbookSource;
 
 	_defaultAddressbookSource = [self retrieveDefaultAddressbookSource];
@@ -43,7 +43,7 @@
 
 - (OGEBookClient *)client
 {
-	if (_client != NULL)
+	if (_client != nil)
 		return _client;
 
 	_client = [self retrieveEBookClient];
@@ -78,21 +78,7 @@
 
 - (OGESource *)retrieveDefaultAddressbookSource
 {
-	OGESourceRegistry *registry = self.registry;
-	OGESource *addressbook;
-
-	/*
-	GList* sources = e_source_registry_list_sources(registry,
-	E_SOURCE_EXTENSION_ADDRESS_BOOK); GList* sourceElement;
-	for(sourceElement = sources; sourceElement; sourceElement =
-	sourceElement->next) { addressbook = sourceElement->data; OFLog(@"%s",
-	e_source_get_display_name(addressbook));
-	}
-	*/
-
-	addressbook = [self.registry refDefaultAddressBook];
-
-	return addressbook;
+	return self.registry.refDefaultAddressBook;
 }
 
 - (OGEBookClient *)retrieveEBookClient
