@@ -63,8 +63,8 @@
 
 - (OGESourceRegistry *)retrieveRegistry
 {
-	GCancellable *cble = g_cancellable_new();
 	OGESourceRegistry *registry;
+	GCancellable *cble = g_cancellable_new();
 
 	@try {
 		registry = [[OGESourceRegistry alloc] initSync:cble];
@@ -80,17 +80,11 @@
 {
 	OGESource *addressbook = self.defaultAddressbookSource;
 	OGEBookClient *client;
-
 	GCancellable *cble = g_cancellable_new();
 
-	@try {
-		client = [OGEBookClient connectSyncWithSource:addressbook
-		                      waitForConnectedSeconds:5
-		                                  cancellable:cble];
-	} @catch (id e) {
-		[client release];
-		@throw e;
-	}
+	client = [OGEBookClient connectSyncWithSource:addressbook
+	                      waitForConnectedSeconds:0
+	                                  cancellable:cble];
 
 	return client;
 }
@@ -112,7 +106,7 @@
 		    exceptionWithDescription:
 		        [OFString
 		            stringWithFormat:@"Could not get any contacts "
-		                             @"from addressbook: %s",
+		                             @"from addressbook: %@",
 		            self.defaultAddressbookSource.displayName]];
 
 	return contactsList;
