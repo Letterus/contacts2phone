@@ -40,6 +40,8 @@
 		return _defaultAddressbookSource;
 
 	_defaultAddressbookSource = self.registry.refDefaultAddressBook;
+	[_defaultAddressbookSource retain];
+
 	return _defaultAddressbookSource;
 }
 
@@ -49,6 +51,8 @@
 		return _client;
 
 	_client = [self retrieveEBookClient];
+	[_client retain];
+
 	return _client;
 }
 
