@@ -29,6 +29,8 @@
 		return _registry;
 
 	_registry = [self retrieveRegistry];
+	[_registry retain];
+
 	return _registry;
 }
 
@@ -73,7 +75,7 @@
 		@throw e;
 	}
 
-	return registry;
+	return [registry autorelease];
 }
 
 - (OGEBookClient *)retrieveEBookClient
@@ -83,7 +85,7 @@
 	GCancellable *cble = g_cancellable_new();
 
 	client = [OGEBookClient connectSyncWithSource:addressbook
-	                      waitForConnectedSeconds:0
+	                      waitForConnectedSeconds:1
 	                                  cancellable:cble];
 
 	return client;
