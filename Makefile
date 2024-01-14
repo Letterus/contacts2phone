@@ -3,9 +3,9 @@ ifeq ($(PREFIX),)
 endif
 PATH  := /usr/local/bin:$(PATH)
 CC    := clang
-CFLAGS := $$(pkg-config --cflags glib-2.0 libedataserver-1.2 libebook-1.2) $$(objfw-config --package OGEBook --package OGEDataServer --cppflags)
+CFLAGS := $$(pkg-config --cflags glib-2.0) $$(objfw-config --package OGEBook --package OGEDataServer --cppflags)
 OBJCFLAGS := $$(objfw-config --objcflags)
-LIBS := $$(pkg-config --libs glib-2.0 libedataserver-1.2 libebook-1.2) $$(objfw-config --package OGEBook --package OGEDataServer --rpath --libs)
+LIBS := $$(pkg-config --libs glib-2.0) $$(objfw-config --package OGEBook --package OGEDataServer --rpath --libs)
 
 OBJ := obj
 
