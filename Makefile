@@ -3,9 +3,9 @@ ifeq ($(PREFIX),)
 endif
 PATH  := /usr/local/bin:$(PATH)
 CC    := clang
-CFLAGS := $$(pkg-config --cflags glib-2.0) $$(objfw-config --package OGEBook --package OGEDataServer --cppflags)
+CFLAGS := $$(objfw-config --package OGEBook --package OGEBookContacts --package OGEDataServer --package OGCamel --package OGObject --cppflags)
 OBJCFLAGS := $$(objfw-config --objcflags)
-LIBS := $$(pkg-config --libs glib-2.0) $$(objfw-config --package OGEBook --package OGEDataServer --rpath --libs)
+LIBS := $$(objfw-config --package OGEBook --package OGEBookContacts --package OGEDataServer --package OGCamel --package OGObject --rpath --libs)
 
 OBJ := obj
 
@@ -13,7 +13,7 @@ SOURCES := $(wildcard *.m) $(wildcard Exception/*.m) $(wildcard Model/*.m)
 OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(SOURCES))
 
 addr2snom: $(OBJECTS)
-	$(CC) $(LIBS) $^ -o $@
+	$(CC) $^ -o $@ $(LIBS)
 
 $(OBJ)/%.o: %.m
 	@mkdir -p $(@D)
