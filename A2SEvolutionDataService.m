@@ -70,7 +70,7 @@
 - (OGESourceRegistry *)retrieveRegistry
 {
 	OGESourceRegistry *registry;
-	GCancellable *cble = g_cancellable_new();
+	OGGCancellable *cble = [[[OGGCancellable alloc] init] autorelease];
 
 	@try {
 		registry = [[OGESourceRegistry alloc] initSync:cble];
@@ -86,7 +86,7 @@
 {
 	OGESource *addressbook = self.defaultAddressbookSource;
 	OGEBookClient *client;
-	GCancellable *cble = g_cancellable_new();
+	OGGCancellable *cble = [[[OGGCancellable alloc] init] autorelease];
 
 	client = [OGEBookClient connectSyncWithSource:addressbook
 	                      waitForConnectedSeconds:1
@@ -101,7 +101,7 @@
 
 	GSList *contactsList = NULL;
 	OFString *sexp = @"";
-	GCancellable *cble = g_cancellable_new();
+	OGGCancellable *cble = [[[OGGCancellable alloc] init] autorelease];
 
 	[client contactsSyncWithSexp:sexp
 	                 outContacts:&contactsList

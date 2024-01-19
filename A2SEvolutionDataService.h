@@ -12,7 +12,7 @@
 
 #import <OGEBook/OGEBook-Umbrella.h>
 #import <OGEDataServer/OGEDataServer-Umbrella.h>
-#include <gio/gio.h>
+#import <OGio/OGio-Umbrella.h>
 #include <glib.h>
 
 OF_ASSUME_NONNULL_BEGIN
