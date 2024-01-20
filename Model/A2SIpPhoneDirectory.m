@@ -66,7 +66,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 				    exceptionWithDescription:
 				        @"Found no phone number."];
 
-		} @catch (id e) {
+		} @catch (A2SEDSException *e) {
 			[newEntry release];
 			continue;
 		}
@@ -85,9 +85,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (OFMutableString *)stringFromPointer:(gpointer)gpointer
 {
 	OFMutableString *returnValue = ((gpointer != NULL)
-	        ? [OFString stringWithUTF8StringNoCopy:(char *_Nonnull)gpointer
-	                                  freeWhenDone:false]
+	        ? [OFMutableString
+	              stringWithUTF8StringNoCopy:(char *_Nonnull)gpointer
+	                            freeWhenDone:false]
 	        : nil);
+
 	return returnValue;
 }
 
