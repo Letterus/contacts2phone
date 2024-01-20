@@ -82,12 +82,24 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 #pragma mark - Private import helper methods
 
+- (OFMutableString *)stringFromPointer:(gpointer)gpointer
+{
+	OFMutableString *returnValue = ((gpointer != NULL)
+	        ? [OFString stringWithUTF8StringNoCopy:(char *_Nonnull)gpointer
+	                                  freeWhenDone:false]
+	        : nil);
+	return returnValue;
+}
+
 - (void)addNameToEntry:(A2SIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
-	OFString *familyname = [econtact get:E_CONTACT_FAMILY_NAME];
-	OFString *givenname = [econtact get:E_CONTACT_GIVEN_NAME];
-	OFString *fullname = [econtact get:E_CONTACT_FULL_NAME];
+	OFMutableString *familyname =
+	    [self stringFromPointer:[econtact get:E_CONTACT_FAMILY_NAME]];
+	OFMutableString *givenname =
+	    [self stringFromPointer:[econtact get:E_CONTACT_GIVEN_NAME]];
+	OFMutableString *fullname =
+	    [self stringFromPointer:[econtact get:E_CONTACT_FULL_NAME]];
 
 	if ([self isValidNameField:familyname]) {
 		if ([self isValidNameField:givenname])
@@ -109,10 +121,14 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (bool)addTelephoneToEntry:(A2SIpPhoneDirectoryEntry *)entry
        fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *primary = [econtact get:E_CONTACT_PHONE_PRIMARY];
-	OFMutableString *home = [econtact get:E_CONTACT_PHONE_HOME];
-	OFMutableString *home2 = [econtact get:E_CONTACT_PHONE_HOME_2];
-	OFMutableString *other = [econtact get:E_CONTACT_PHONE_OTHER];
+	OFMutableString *primary =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_PRIMARY]];
+	OFMutableString *home =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_HOME]];
+	OFMutableString *home2 =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_HOME_2]];
+	OFMutableString *other =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_OTHER]];
 
 	if ([self isValidPhoneField:primary]) {
 		primary = [self cleanPhoneNumber:primary];
@@ -142,9 +158,12 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (bool)addOfficeToEntry:(A2SIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *business = [econtact get:E_CONTACT_PHONE_BUSINESS];
-	OFMutableString *business2 = [econtact get:E_CONTACT_PHONE_BUSINESS_2];
-	OFMutableString *company = [econtact get:E_CONTACT_PHONE_COMPANY];
+	OFMutableString *business =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_BUSINESS]];
+	OFMutableString *business2 =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_BUSINESS_2]];
+	OFMutableString *company =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_COMPANY]];
 
 	if ([self isValidPhoneField:business]) {
 		entry.office = [self cleanPhoneNumber:business];
@@ -165,9 +184,12 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (bool)addMobileToEntry:(A2SIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *mobile = [econtact get:E_CONTACT_PHONE_MOBILE];
-	OFMutableString *pager = [econtact get:E_CONTACT_PHONE_PAGER];
-	OFMutableString *car = [econtact get:E_CONTACT_PHONE_CAR];
+	OFMutableString *mobile =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_MOBILE]];
+	OFMutableString *pager =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_PAGER]];
+	OFMutableString *car =
+	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_CAR]];
 
 	if ([self isValidPhoneField:mobile]) {
 		entry.mobile = [self cleanPhoneNumber:mobile];
