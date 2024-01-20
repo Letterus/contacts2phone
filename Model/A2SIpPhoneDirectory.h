@@ -7,11 +7,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+#import <OGEBook/OGEBook-Umbrella.h>
+#import <OGEBookContacts/OGEBookContacts-Umbrella.h>
 #import <ObjFW/ObjFW.h>
-
-#include <gio/gio.h>
-#include <glib.h>
-#include <libebook/libebook.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
