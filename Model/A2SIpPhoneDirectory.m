@@ -40,7 +40,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	for (GSList *element = evolutionContacts; element != NULL;
 	     element = element->next) {
 		EContact *gecontact = element->data;
-		OGEContact *econtact = [OGEContact wrapperFor:gecontact];
+		OGEContact *econtact = [OGEContact withGObject:gecontact];
 		bool gotPhoneNumber = false;
 
 		A2SIpPhoneDirectoryEntry *newEntry =
