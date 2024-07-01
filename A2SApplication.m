@@ -29,6 +29,9 @@ OF_APPLICATION_DELEGATE(A2SApplication)
 	[OFStdOut writeString:phoneDirectory.stringBySerializing];
 
 	[OFStdErr writeLine:@"Finished!"];
+
+	[evolutionService release];
+	[phoneDirectory release];
 	[OFApplication terminate];
 }
 
