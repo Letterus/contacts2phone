@@ -27,11 +27,11 @@ $(OBJ)/Model/%.o: Model/%.m
 	@mkdir -p $(@D)
 	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
 
-build: addr2snom
+build: contacts2phone
 
-install: addr2snom
+install: contacts2phone
 	@install -d $(DESTDIR)$(PREFIX)/bin/
-	@install -m 755 addr2snom $(DESTDIR)$(PREFIX)/bin/
+	@install -m 755 contacts2phone $(DESTDIR)$(PREFIX)/bin/
 
-run: addr2snom
-	@./addr2snom
+run: contacts2phone
+	@./contacts2phone

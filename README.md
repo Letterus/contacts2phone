@@ -1,4 +1,4 @@
-# addr2snom
+# contacts2phone
 
 Tool to upload contacts from a GNOME addressbook to an Snom VoIP phone (M300/M700/M900) using the [IPPhoneDirectory format](https://service.snom.com/display/wiki/How+to+use+the+Local+Central+Directory+on+M300%2C+M700%2C+M900+DECT+base#HowtousetheLocalCentralDirectoryonM300,M700,M900DECTbase-TheIPPhoneDirectoryformat) (Local Central Directory) (WIP)
 
@@ -7,14 +7,14 @@ Tool to upload contacts from a GNOME addressbook to an Snom VoIP phone (M300/M70
 Execute and redirect stdout output:
 
 ```
-./addr2snom > Directory.xml
+./contacts2phone > Directory.xml
 ```
 
 To save directory file locally.
 
 Use this to upload to your IP DECT base directly (if you have curl installed):
 ```
- ./addr2snom | curl -i -X POST -u <adminuser> -F "Directory=@-" http://<ip address>/UploadFile.html
+ ./contacts2phone | curl -i -X POST -u <adminuser> -F "Directory=@-" http://<ip address>/UploadFile.html
 ```
 
 Replace `<adminuser>` and `<ip address>` by your local values. Hit return.
