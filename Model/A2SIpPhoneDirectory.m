@@ -39,44 +39,47 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 {
 	for (GSList *element = evolutionContacts; element != NULL;
 	     element = element->next) {
-		EContact *gecontact = element->data;
-		OGEContact *econtact = [OGEContact withGObject:gecontact];
-		bool gotPhoneNumber = false;
+		@autoreleasepool {
+			EContact *gecontact = element->data;
+			OGEContact *econtact =
+			    [OGEContact withGObject:gecontact];
+			bool gotPhoneNumber = false;
 
-		A2SIpPhoneDirectoryEntry *newEntry =
-		    [[A2SIpPhoneDirectoryEntry alloc] init];
+			A2SIpPhoneDirectoryEntry *newEntry =
+			    [[A2SIpPhoneDirectoryEntry alloc] init];
 
-		@try {
-			[self addNameToEntry:newEntry
-			    fromEvolutionContact:econtact];
-			if ([self addOfficeToEntry:newEntry
-			        fromEvolutionContact:econtact])
-				gotPhoneNumber = true;
+			@try {
+				[self addNameToEntry:newEntry
+				    fromEvolutionContact:econtact];
+				if ([self addOfficeToEntry:newEntry
+				        fromEvolutionContact:econtact])
+					gotPhoneNumber = true;
 
-			if ([self addMobileToEntry:newEntry
-			        fromEvolutionContact:econtact])
-				gotPhoneNumber = true;
+				if ([self addMobileToEntry:newEntry
+				        fromEvolutionContact:econtact])
+					gotPhoneNumber = true;
 
-			if ([self addTelephoneToEntry:newEntry
-			         fromEvolutionContact:econtact])
-				gotPhoneNumber = true;
+				if ([self addTelephoneToEntry:newEntry
+				         fromEvolutionContact:econtact])
+					gotPhoneNumber = true;
 
-			if (!gotPhoneNumber)
-				@throw [A2SEDSException
-				    exceptionWithDescription:
-				        @"Found no phone number."];
+				if (!gotPhoneNumber)
+					@throw [A2SEDSException
+					    exceptionWithDescription:
+					        @"Found no phone number."];
 
-		} @catch (A2SEDSException *e) {
+			} @catch (A2SEDSException *e) {
+				[newEntry release];
+				continue;
+			}
+
+			[self.entries addObject:newEntry];
+
+			OFLog(@"Added to Directory Entry: %@",
+			    [newEntry description]);
+
 			[newEntry release];
-			continue;
 		}
-
-		[self.entries addObject:newEntry];
-
-		OFLog(@"Added to Directory Entry: %@", [newEntry description]);
-
-		[newEntry release];
-		[econtact release];
 	}
 }
 
