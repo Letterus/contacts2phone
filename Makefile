@@ -12,7 +12,7 @@ OBJ := obj
 SOURCES := $(wildcard *.m) $(wildcard Exception/*.m) $(wildcard Model/*.m)
 OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(SOURCES))
 
-addr2snom: $(OBJECTS)
+contacts2phone: $(OBJECTS)
 	$(CC) $^ -o $@ $(LIBS)
 
 $(OBJ)/%.o: %.m

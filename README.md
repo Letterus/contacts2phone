@@ -21,12 +21,14 @@ Replace `<adminuser>` and `<ip address>` by your local values. Hit return.
 
 Insert your admin password. You should see HTML output telling you the settings were saved.
 
-## Dependencies
+## Build dependencies
 
-- objfw-1.0 (built with clang)
+- [objfw-1.x (built with clang)](https://github.com/ObjFW/ObjFW)
 - glib-2.0
 - libedataserver-1.2
 - libebook-1.2
+- [OGObject (latest)](https://codeberg.org/ObjGTK/OGObject)
+- [OGEBook (latest)](https://codeberg.org/ObjGTK/OGEBook)
 
 Installation for Ubuntu/elementary OS:
 
@@ -34,6 +36,4 @@ Installation for Ubuntu/elementary OS:
 sudo apt-get install libglib2.0-dev libedataserver1.2-dev libebook1.2-dev
 ```
 
-## Build dependencies
-
-- clang
+And from sources (currently).
