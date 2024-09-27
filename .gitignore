@@ -167,6 +167,6 @@ dkms.conf
 
 .vscode
 
-addr2snom
+contacts2phone
 Directory.xml
 *.sublime-workspace
