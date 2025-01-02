@@ -240,7 +240,8 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	cleanPhoneNumber = [[cleanPhoneNumber
 	    componentsSeparatedByCharactersInSet:_cleanNumberCharsToKeep]
 	    componentsJoinedByString:@""];
-	return cleanPhoneNumber;
+
+	return [cleanPhoneNumber stringByDeletingEnclosingWhitespaces];
 }
 
 #pragma mark - Serializers
