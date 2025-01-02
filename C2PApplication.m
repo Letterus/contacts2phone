@@ -9,6 +9,7 @@
 
 #import "Model/C2PIpPhoneDirectory.h"
 #import "Service/C2PEvolutionDataService.h"
+#import "View/GTK/C2PGTKApplicationDelegate.h"
 #import <ObjFW/ObjFW.h>
 
 @interface C2PApplication: OFObject <OFApplicationDelegate>
@@ -19,21 +20,22 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 @implementation C2PApplication
 - (void)applicationDidFinishLaunching:(OFNotification *)notification
 {
+	// #ifdef LINUX
 	C2PEvolutionDataService *evolutionService =
 	    [[C2PEvolutionDataService alloc] init];
 
+	// General model
 	C2PIpPhoneDirectory *phoneDirectory =
 	    [[C2PIpPhoneDirectory alloc] init];
 
-	[phoneDirectory importFromEvolutionBook:evolutionService.contacts];
-
-	[OFStdOut writeString:phoneDirectory.stringBySerializing];
-
-	[OFStdErr writeLine:@"Finished!"];
-
+	// #ifdef LINUX
+	C2PGTKApplicationDelegate *gtkApplicationDelegate =
+	    [[C2PGTKApplicationDelegate alloc] initWithEDS:evolutionService
+	                                    phoneDirectory:phoneDirectory];
 	[evolutionService release];
 	[phoneDirectory release];
-	[OFApplication terminate];
+	
+	[OFApplication terminateWithStatus:[gtkApplicationDelegate launch]];
 }
 
 @end
