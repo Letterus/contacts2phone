@@ -22,6 +22,9 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	self = [super init];
 
 	_entries = [[OFMutableArray alloc] init];
+	_allowedCharsInPhoneNumber =
+	    [OFCharacterSet characterSetWithCharactersInString:@"+0123456789 "];
+	_cleanNumberCharsToKeep = [_allowedCharsInPhoneNumber invertedSet];
 
 	return self;
 }
@@ -85,12 +88,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 #pragma mark - Private import helper methods
 
-- (OFMutableString *)stringFromPointer:(gpointer)gpointer
+- (OFString *)stringFromPointer:(gpointer)gpointer
 {
-	OFMutableString *returnValue = ((gpointer != NULL)
-	        ? [OFMutableString
-	              stringWithUTF8StringNoCopy:(char *_Nonnull)gpointer
-	                            freeWhenDone:false]
+	OFString *returnValue = ((gpointer != NULL)
+	        ? [OFString stringWithUTF8StringNoCopy:(char *_Nonnull)gpointer
+	                                  freeWhenDone:false]
 	        : nil);
 
 	return returnValue;
@@ -99,11 +101,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (void)addNameToEntry:(C2PIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *familyname =
+	OFString *familyname =
 	    [self stringFromPointer:[econtact get:E_CONTACT_FAMILY_NAME]];
-	OFMutableString *givenname =
+	OFString *givenname =
 	    [self stringFromPointer:[econtact get:E_CONTACT_GIVEN_NAME]];
-	OFMutableString *fullname =
+	OFString *fullname =
 	    [self stringFromPointer:[econtact get:E_CONTACT_FULL_NAME]];
 
 	if ([self isValidNameField:familyname]) {
@@ -126,13 +128,13 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (bool)addTelephoneToEntry:(C2PIpPhoneDirectoryEntry *)entry
        fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *primary =
+	OFString *primary =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_PRIMARY]];
-	OFMutableString *home =
+	OFString *home =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_HOME]];
-	OFMutableString *home2 =
+	OFString *home2 =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_HOME_2]];
-	OFMutableString *other =
+	OFString *other =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_OTHER]];
 
 	if ([self isValidPhoneField:primary]) {
@@ -163,11 +165,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (bool)addOfficeToEntry:(C2PIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *business =
+	OFString *business =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_BUSINESS]];
-	OFMutableString *business2 =
+	OFString *business2 =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_BUSINESS_2]];
-	OFMutableString *company =
+	OFString *company =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_COMPANY]];
 
 	if ([self isValidPhoneField:business]) {
@@ -189,11 +191,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 - (bool)addMobileToEntry:(C2PIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
-	OFMutableString *mobile =
+	OFString *mobile =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_MOBILE]];
-	OFMutableString *pager =
+	OFString *pager =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_PAGER]];
-	OFMutableString *car =
+	OFString *car =
 	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_CAR]];
 
 	if ([self isValidPhoneField:mobile]) {
@@ -220,7 +222,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	return false;
 }
 
-- (bool)isValidPhoneField:(OFMutableString *)phoneField
+- (bool)isValidPhoneField:(OFString *)phoneField
 {
 	if (phoneField != nil && ![phoneField isEqual:@""] &&
 	    [phoneField length] > 3)
@@ -229,17 +231,16 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	return false;
 }
 
-- (OFMutableString *)cleanPhoneNumber:(OFMutableString *)phoneNumber
+- (OFString *)cleanPhoneNumber:(OFString *)phoneNumber
 {
-	[phoneNumber replaceOccurrencesOfString:@"(0)" withString:@""];
-	[phoneNumber replaceOccurrencesOfString:@"(" withString:@""];
-	[phoneNumber replaceOccurrencesOfString:@")" withString:@""];
-	[phoneNumber replaceOccurrencesOfString:@"/" withString:@" "];
-	[phoneNumber replaceOccurrencesOfString:@"-" withString:@" "];
-	[phoneNumber replaceOccurrencesOfString:@"   " withString:@" "];
-	[phoneNumber replaceOccurrencesOfString:@"  " withString:@" "];
-	[phoneNumber deleteEnclosingWhitespaces];
-	return phoneNumber;
+	OFString *cleanPhoneNumber =
+	    [phoneNumber stringByReplacingOccurrencesOfString:@"(0)"
+	                                           withString:@""];
+
+	cleanPhoneNumber = [[cleanPhoneNumber
+	    componentsSeparatedByCharactersInSet:_cleanNumberCharsToKeep]
+	    componentsJoinedByString:@""];
+	return cleanPhoneNumber;
 }
 
 #pragma mark - Serializers

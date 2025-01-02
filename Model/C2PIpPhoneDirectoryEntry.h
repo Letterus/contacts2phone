@@ -14,9 +14,9 @@ OF_ASSUME_NONNULL_BEGIN
 @interface C2PIpPhoneDirectoryEntry: OFObject
 
 @property (retain, nonatomic) OFString *name;
-@property (retain, nonatomic) OFMutableString *telephone;
-@property (retain, nonatomic) OFMutableString *office;
-@property (retain, nonatomic) OFMutableString *mobile;
+@property (retain, nonatomic) OFString *telephone;
+@property (retain, nonatomic) OFString *office;
+@property (retain, nonatomic) OFString *mobile;
 
 /**
  * @brief The object serialized into an DirectoryEntry XML element.

@@ -14,6 +14,10 @@
 OF_ASSUME_NONNULL_BEGIN
 
 @interface C2PIpPhoneDirectory: OFObject
+{
+	OFCharacterSet *_allowedCharsInPhoneNumber;
+	OFCharacterSet *_cleanNumberCharsToKeep;
+}
 
 @property (retain, nonatomic) OFMutableArray *entries;
 
