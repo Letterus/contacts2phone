@@ -7,8 +7,8 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "C2PEvolutionDataService.h"
 #import "Model/C2PIpPhoneDirectory.h"
+#import "Service/C2PEvolutionDataService.h"
 #import <ObjFW/ObjFW.h>
 
 @interface C2PApplication: OFObject <OFApplicationDelegate>
@@ -21,6 +21,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 {
 	C2PEvolutionDataService *evolutionService =
 	    [[C2PEvolutionDataService alloc] init];
+
 	C2PIpPhoneDirectory *phoneDirectory =
 	    [[C2PIpPhoneDirectory alloc] init];
 
