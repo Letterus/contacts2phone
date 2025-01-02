@@ -11,7 +11,7 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SIpPhoneDirectoryEntry: OFObject
+@interface C2PIpPhoneDirectoryEntry: OFObject
 
 @property (retain, nonatomic) OFString *name;
 @property (retain, nonatomic) OFMutableString *telephone;

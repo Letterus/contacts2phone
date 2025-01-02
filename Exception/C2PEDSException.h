@@ -7,12 +7,12 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SDescriptionException.h"
+#import "C2PDescriptionException.h"
 #import <ObjFW/ObjFW.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SEDSException: A2SDescriptionException
+@interface C2PEDSException: C2PDescriptionException
 
 @end
 

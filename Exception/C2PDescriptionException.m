@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SDescriptionException.h"
+#import "C2PDescriptionException.h"
 
-@implementation A2SDescriptionException
+@implementation C2PDescriptionException
 
 @synthesize description = _description;
 

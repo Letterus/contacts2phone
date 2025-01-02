@@ -11,7 +11,7 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SDescriptionException: OFException
+@interface C2PDescriptionException: OFException
 
 @property (retain, nonatomic) OFString *description;
 

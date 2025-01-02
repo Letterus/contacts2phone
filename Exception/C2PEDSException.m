@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SEDSException.h"
+#import "C2PEDSException.h"
 
-@implementation A2SEDSException
+@implementation C2PEDSException
 
 - (OFString *)description
 {

@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SIpPhoneDirectoryEntry.h"
+#import "C2PIpPhoneDirectoryEntry.h"
 
-@implementation A2SIpPhoneDirectoryEntry
+@implementation C2PIpPhoneDirectoryEntry
 
 - (void)dealloc
 {

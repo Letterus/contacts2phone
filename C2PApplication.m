@@ -7,22 +7,22 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SEvolutionDataService.h"
-#import "Model/A2SIpPhoneDirectory.h"
+#import "C2PEvolutionDataService.h"
+#import "Model/C2PIpPhoneDirectory.h"
 #import <ObjFW/ObjFW.h>
 
-@interface A2SApplication: OFObject <OFApplicationDelegate>
+@interface C2PApplication: OFObject <OFApplicationDelegate>
 @end
 
-OF_APPLICATION_DELEGATE(A2SApplication)
+OF_APPLICATION_DELEGATE(C2PApplication)
 
-@implementation A2SApplication
+@implementation C2PApplication
 - (void)applicationDidFinishLaunching:(OFNotification *)notification
 {
-	A2SEvolutionDataService *evolutionService =
-	    [[A2SEvolutionDataService alloc] init];
-	A2SIpPhoneDirectory *phoneDirectory =
-	    [[A2SIpPhoneDirectory alloc] init];
+	C2PEvolutionDataService *evolutionService =
+	    [[C2PEvolutionDataService alloc] init];
+	C2PIpPhoneDirectory *phoneDirectory =
+	    [[C2PIpPhoneDirectory alloc] init];
 
 	[phoneDirectory importFromEvolutionBook:evolutionService.contacts];
 

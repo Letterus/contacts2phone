@@ -6,18 +6,15 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-
-#import "Exception/A2SEDSException.h"
 #import <ObjFW/ObjFW.h>
 
 #import <OGEBook/OGEBook-Umbrella.h>
 #import <OGEDataServer/OGEDataServer-Umbrella.h>
 #import <OGio/OGio-Umbrella.h>
-#include <glib.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface A2SEvolutionDataService: OFObject
+@interface C2PEvolutionDataService: OFObject
 
 @property (nonatomic, retain) OGESourceRegistry *registry;
 @property (nonatomic, retain) OGESource *defaultAddressbookSource;

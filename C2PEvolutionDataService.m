@@ -7,9 +7,10 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SEvolutionDataService.h"
+#import "C2PEvolutionDataService.h"
+#import "Exception/C2PEDSException.h"
 
-@implementation A2SEvolutionDataService
+@implementation C2PEvolutionDataService
 
 - (void)dealloc
 {
@@ -108,7 +109,7 @@
 	                 cancellable:cble];
 
 	if (contactsList == NULL)
-		@throw [A2SDescriptionException
+		@throw [C2PDescriptionException
 		    exceptionWithDescription:
 		        [OFString
 		            stringWithFormat:@"Could not get any contacts "

@@ -7,13 +7,13 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "A2SIpPhoneDirectory.h"
-#import "../Exception/A2SEDSException.h"
-#import "A2SIpPhoneDirectoryEntry.h"
+#import "C2PIpPhoneDirectory.h"
+#import "../Exception/C2PEDSException.h"
+#import "C2PIpPhoneDirectoryEntry.h"
 
 const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
-@implementation A2SIpPhoneDirectory
+@implementation C2PIpPhoneDirectory
 
 #pragma mark - Init methods
 
@@ -45,8 +45,8 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 			    [OGEContact withGObject:gecontact];
 			bool gotPhoneNumber = false;
 
-			A2SIpPhoneDirectoryEntry *newEntry =
-			    [[A2SIpPhoneDirectoryEntry alloc] init];
+			C2PIpPhoneDirectoryEntry *newEntry =
+			    [[C2PIpPhoneDirectoryEntry alloc] init];
 
 			@try {
 				[self addNameToEntry:newEntry
@@ -64,11 +64,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 					gotPhoneNumber = true;
 
 				if (!gotPhoneNumber)
-					@throw [A2SEDSException
+					@throw [C2PEDSException
 					    exceptionWithDescription:
 					        @"Found no phone number."];
 
-			} @catch (A2SEDSException *e) {
+			} @catch (C2PEDSException *e) {
 				[newEntry release];
 				continue;
 			}
@@ -96,7 +96,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	return returnValue;
 }
 
-- (void)addNameToEntry:(A2SIpPhoneDirectoryEntry *)entry
+- (void)addNameToEntry:(C2PIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
 	OFMutableString *familyname =
@@ -118,12 +118,12 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	} else if ([self isValidNameField:fullname]) {
 		entry.name = fullname;
 	} else {
-		@throw [A2SEDSException
+		@throw [C2PEDSException
 		    exceptionWithDescription:@"Name fields are empty."];
 	}
 }
 
-- (bool)addTelephoneToEntry:(A2SIpPhoneDirectoryEntry *)entry
+- (bool)addTelephoneToEntry:(C2PIpPhoneDirectoryEntry *)entry
        fromEvolutionContact:(OGEContact *)econtact
 {
 	OFMutableString *primary =
@@ -160,7 +160,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	return false;
 }
 
-- (bool)addOfficeToEntry:(A2SIpPhoneDirectoryEntry *)entry
+- (bool)addOfficeToEntry:(C2PIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
 	OFMutableString *business =
@@ -186,7 +186,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	return false;
 }
 
-- (bool)addMobileToEntry:(A2SIpPhoneDirectoryEntry *)entry
+- (bool)addMobileToEntry:(C2PIpPhoneDirectoryEntry *)entry
     fromEvolutionContact:(OGEContact *)econtact
 {
 	OFMutableString *mobile =
@@ -270,7 +270,7 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	OFXMLElement *element =
 	    [OFXMLElement elementWithName:@"IPPhoneDirectory"];
 
-	for (A2SIpPhoneDirectoryEntry *entry in self.entries) {
+	for (C2PIpPhoneDirectoryEntry *entry in self.entries) {
 		[element addChild:entry.XMLElementBySerializing];
 	}
 
