@@ -236,10 +236,13 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 	OFString *cleanPhoneNumber =
 	    [phoneNumber stringByReplacingOccurrencesOfString:@"(0)"
 	                                           withString:@""];
-
-	cleanPhoneNumber = [[cleanPhoneNumber
-	    componentsSeparatedByCharactersInSet:_cleanNumberCharsToKeep]
-	    componentsJoinedByString:@""];
+	@autoreleasepool {
+		cleanPhoneNumber = [[cleanPhoneNumber
+		    componentsSeparatedByCharactersInSet:
+		        _cleanNumberCharsToKeep] componentsJoinedByString:@""];
+		[cleanPhoneNumber retain];
+	}
+	[cleanPhoneNumber autorelease];
 
 	return [cleanPhoneNumber stringByDeletingEnclosingWhitespaces];
 }
