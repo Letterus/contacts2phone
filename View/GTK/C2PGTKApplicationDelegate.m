@@ -8,7 +8,7 @@
  */
 
 #import "C2PGTKApplicationDelegate.h"
-#include <ObjFW/OFException.h>
+#import <OGAdw/OGAdw-Umbrella.h>
 
 @implementation C2PGTKApplicationDelegate
 @synthesize app = _app;
@@ -65,37 +65,72 @@
 {
 	[self buildUI:app];
 
-	// Load addressbooks
-	// Bind data
+	// Setup controller
+	// Bind actions
 }
 
 - (void)buildUI:(OGTKApplication *)app
 {
+	// Window
 	OGTKApplicationWindow *window =
 	    [[OGTKApplicationWindow alloc] init:self.app];
-	window.title = @"Transfer Contacts to IP Phone";
 
 	[window setDefaultSizeWithWidth:640 height:480];
+	window.title = @"Transfer contacts to IP phone";
 
+	// Left/start widget
+	OGTKListBox *addressBooksListBox = [[OGTKListBox alloc] init];
+	addressBooksListBox.hexpand = true;
+	addressBooksListBox.vexpand = true;
+
+	OGTKScrolledWindow *scrolledWindow = [[OGTKScrolledWindow alloc] init];
+	scrolledWindow.child = addressBooksListBox;
+
+	OGTKHeaderBar *headerBar = [[OGTKHeaderBar alloc] init];
+	headerBar.showTitleButtons = false;
+	OGTKGrid *nullTitle = [[OGTKGrid alloc] init];
+	nullTitle.visible = false;
+	headerBar.titleWidget = nullTitle;
+
+	OGTKButton *transferButton =
+	    [[OGTKButton alloc] initWithLabel:@"Transfer"];
+	OGTKActionBar *leftActionBar = [[OGTKActionBar alloc] init];
+	[leftActionBar packEnd:transferButton];
+
+	OGAdwToolbarView *toolbarLeft = [[OGAdwToolbarView alloc] init];
+	toolbarLeft.bottomBarStyle = ADW_TOOLBAR_RAISED;
+	toolbarLeft.content = scrolledWindow;
+	[toolbarLeft addTopBar:headerBar];
+	[toolbarLeft addBottomBar:leftActionBar];
+
+	// Right/last widget
 	OGTKBox *box =
 	    [[OGTKBox alloc] initWithOrientation:GTK_ORIENTATION_VERTICAL
 	                                 spacing:0];
 	box.halign = GTK_ALIGN_CENTER;
 	box.valign = GTK_ALIGN_CENTER;
 
-	window.child = box;
+	// Put together
+	[toolbarLeft setSizeRequestWithWidth:320 height:-1];
+	[box setSizeRequestWithWidth:320 height:-1];
 
-	OGTKButton *button = [[OGTKButton alloc] initWithLabel:@"Import"];
-	[button connectSignal:@"clicked"
-	               target:self
-	             selector:@selector(import:)];
+	OGTKPaned *hpaned = [[OGTKPaned alloc] init:GTK_ORIENTATION_HORIZONTAL];
 
-	[box append:button];
+	hpaned.startChild = toolbarLeft;
+	hpaned.endChild = box;
+
+	window.child = hpaned;
+
+	// Bindings - move to controller
 	[window present];
+
+	[transferButton connectSignal:@"clicked"
+	                       target:self
+	                     selector:@selector(transfer:)];
 }
 
 // Action
-- (void)import:(id)emitter
+- (void)transfer:(id)emitter
 {
 	[self.phoneDirectory
 	    importFromEvolutionBook:self.evolutionService.contacts];
