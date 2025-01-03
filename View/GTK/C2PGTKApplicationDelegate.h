@@ -20,14 +20,16 @@ OF_ASSUME_NONNULL_BEGIN
 	C2PIpPhoneDirectory *_phoneDirectory;
 }
 
-@property (retain) OGTKApplication *app;
-@property (retain) C2PEvolutionDataService *evolutionService;
-@property (retain) C2PIpPhoneDirectory *phoneDirectory;
+@property (assign) OGTKApplication *app;
+@property (assign) C2PEvolutionDataService *evolutionService;
+@property (assign) C2PIpPhoneDirectory *phoneDirectory;
 
 - (instancetype)initWithEDS:(C2PEvolutionDataService *)evolutionService
              phoneDirectory:(C2PIpPhoneDirectory *)phoneDirectory;
 
 - (int)launch;
+
+// - (void)loadCSS:(OGTKApplication *)app;
 
 - (void)activateApplication:(OGTKApplication *)app;
 

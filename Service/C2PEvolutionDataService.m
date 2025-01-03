@@ -46,6 +46,27 @@
 	return _defaultAddressbookSource;
 }
 
+- (OGListStore *)addressbookSources
+{
+	OGListStore *addressBookListStore =
+	    [[[OGListStore alloc] init:e_source_get_type()] autorelease];
+
+	GList *sourceList = [self.registry listSources:@"Address Book"];
+
+	for (GList *element = sourceList; element != NULL;
+	     element = element->next) {
+		ESource *source = element->data;
+		// OFLog(@"Addressbook name %s, UUID: %s",
+		//     e_source_get_display_name(source),
+		//     e_source_get_uid(source));
+		[addressBookListStore append:source];
+		g_object_unref(source);
+	}
+	g_list_free(sourceList);
+
+	return addressBookListStore;
+}
+
 - (OGEBookClient *)client
 {
 	if (_client != nil)

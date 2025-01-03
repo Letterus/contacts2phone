@@ -9,6 +9,21 @@
 
 #import "C2PGTKApplicationDelegate.h"
 #import <OGAdw/OGAdw-Umbrella.h>
+#import <OGdk4/OGdk4-Umbrella.h>
+#import <OGio/OGio-Umbrella.h>
+#include <adwaita.h>
+
+static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
+{
+	OGAdwActionRow *row = [[[OGAdwActionRow alloc] init] autorelease];
+	row.title = @"Address book";
+	g_object_bind_property(item, "display-name", [row castedGObject],
+	    "subtitle", G_BINDING_SYNC_CREATE);
+
+	[row addCssClass:@"property"];
+
+	return [row castedGObject];
+}
 
 @implementation C2PGTKApplicationDelegate
 @synthesize app = _app;
@@ -17,9 +32,6 @@
 
 - (void)dealloc
 {
-	[_app release];
-	[_evolutionService release];
-	[_phoneDirectory release];
 
 	[super dealloc];
 }
@@ -50,6 +62,11 @@
 	self.app = [[OGTKApplication alloc]
 	    initWithApplicationId:@"org.codeberg.Letterus.contacts2phone"
 	                    flags:G_APPLICATION_DEFAULT_FLAGS];
+
+	/*	[self.app connectSignal:@"startup"
+	                         target:self
+	                       selector:@selector(loadCSS:)];*/
+
 	[self.app connectSignal:@"activate"
 	                 target:self
 	               selector:@selector(activateApplication:)];
@@ -60,6 +77,18 @@
 
 	return [self.app runWithArgc:*argc argv:*argv];
 }
+
+/*- (void)loadCSS:(OGTKApplication *)app;
+{
+        OGTKCssProvider *provider = [[[OGTKCssProvider alloc] init]
+autorelease]; [provider loadFromString:@"style.css"];
+
+        [OGTKStyleContext
+            addProviderForDisplayWithDisplay:[OGGdkDisplay default]
+                                    provider:[provider castedGObject]
+                                    priority:
+                                        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION];
+}*/
 
 - (void)activateApplication:(OGTKApplication *)app
 {
@@ -76,16 +105,35 @@
 	    [[OGTKApplicationWindow alloc] init:self.app];
 
 	[window setDefaultSizeWithWidth:640 height:480];
-	window.title = @"Transfer contacts to IP phone";
+	window.title = @"Transfer contacts to SNOM IP phone base";
+
+	OGAdwClamp *addressBooksClamp = [[OGAdwClamp alloc] init];
 
 	// Left/start widget
-	OGTKListBox *addressBooksListBox = [[OGTKListBox alloc] init];
-	addressBooksListBox.hexpand = true;
-	addressBooksListBox.vexpand = true;
+	OGTKListBox *addressBooksList = [[OGTKListBox alloc] init];
 
-	OGTKScrolledWindow *scrolledWindow = [[OGTKScrolledWindow alloc] init];
-	scrolledWindow.child = addressBooksListBox;
+	OGTKLabel *addressBooksLabel =
+	    [[OGTKLabel alloc] init:@"Address books - select one to transfer:"];
+	addressBooksLabel.halign = GTK_ALIGN_START;
 
+	OGTKBox *addressBooksListBox =
+	    [[OGTKBox alloc] initWithOrientation:GTK_ORIENTATION_VERTICAL
+	                                 spacing:24];
+	addressBooksListBox.marginTop = 12;
+	addressBooksListBox.marginBottom = 12;
+	addressBooksListBox.marginStart = 12;
+	addressBooksListBox.marginEnd = 12;
+
+	[addressBooksListBox append:addressBooksLabel];
+	[addressBooksListBox append:addressBooksList];
+
+	addressBooksClamp.child = addressBooksListBox;
+
+	OGTKScrolledWindow *scrolledFirstWindow =
+	    [[OGTKScrolledWindow alloc] init];
+	scrolledFirstWindow.child = addressBooksClamp;
+
+	// Right/last widget
 	OGTKHeaderBar *headerBar = [[OGTKHeaderBar alloc] init];
 	headerBar.showTitleButtons = false;
 	OGTKGrid *nullTitle = [[OGTKGrid alloc] init];
@@ -97,27 +145,65 @@
 	OGTKActionBar *leftActionBar = [[OGTKActionBar alloc] init];
 	[leftActionBar packEnd:transferButton];
 
-	OGAdwToolbarView *toolbarLeft = [[OGAdwToolbarView alloc] init];
-	toolbarLeft.bottomBarStyle = ADW_TOOLBAR_RAISED;
-	toolbarLeft.content = scrolledWindow;
-	[toolbarLeft addTopBar:headerBar];
-	[toolbarLeft addBottomBar:leftActionBar];
+	OGTKScrolledWindow *scrolledSecondWindow =
+	    [[OGTKScrolledWindow alloc] init];
+	OGAdwToolbarView *toolbarSecond = [[OGAdwToolbarView alloc] init];
+	toolbarSecond.bottomBarStyle = ADW_TOOLBAR_RAISED;
+	toolbarSecond.content = scrolledSecondWindow;
+	[toolbarSecond addTopBar:headerBar];
+	[toolbarSecond addBottomBar:leftActionBar];
 
-	// Right/last widget
-	OGTKBox *box =
+	// Left/start widget
+	OGAdwClamp *phoneBaseCredentialsClamp = [[OGAdwClamp alloc] init];
+
+	OGAdwPreferencesGroup *phoneBaseCredentials =
+	    [[OGAdwPreferencesGroup alloc] init];
+	[phoneBaseCredentials setTitle:@"Phone Base Credentials"];
+	[phoneBaseCredentials
+	    setDescription:
+	        @"Enter IP and admin credentials for your snom M300:"];
+
+	OGAdwEntryRow *ipAddressOrHostnameInput = [[OGAdwEntryRow alloc] init];
+	[ipAddressOrHostnameInput setTitle:@"IP address or hostname"];
+	[ipAddressOrHostnameInput
+	    setTooltipText:@"You don't need to prepend http(s)://"];
+	ipAddressOrHostnameInput.showApplyButton = true;
+	[phoneBaseCredentials add:ipAddressOrHostnameInput];
+
+	OGAdwEntryRow *adminUserNameInput = [[OGAdwEntryRow alloc] init];
+	[adminUserNameInput setTitle:@"Admin user name"];
+	[adminUserNameInput setTooltipText:@"Usually \"admin\""];
+	[phoneBaseCredentials add:adminUserNameInput];
+
+	OGAdwPasswordEntryRow *adminUserPasswordInput =
+	    [[OGAdwPasswordEntryRow alloc] init];
+	[adminUserPasswordInput setTitle:@"Admin user password"];
+	[phoneBaseCredentials add:adminUserPasswordInput];
+
+	OGTKBox *phoneBaseCredentialsBox =
 	    [[OGTKBox alloc] initWithOrientation:GTK_ORIENTATION_VERTICAL
-	                                 spacing:0];
-	box.halign = GTK_ALIGN_CENTER;
-	box.valign = GTK_ALIGN_CENTER;
+	                                 spacing:24];
+
+	[phoneBaseCredentialsBox setValign:GTK_ALIGN_CENTER];
+	phoneBaseCredentialsBox.marginTop = 12;
+	phoneBaseCredentialsBox.marginBottom = 12;
+	phoneBaseCredentialsBox.marginStart = 12;
+	phoneBaseCredentialsBox.marginEnd = 12;
+
+	[phoneBaseCredentialsBox append:phoneBaseCredentials];
+
+	phoneBaseCredentialsClamp.child = phoneBaseCredentialsBox;
+
+	scrolledSecondWindow.child = phoneBaseCredentialsClamp;
 
 	// Put together
-	[toolbarLeft setSizeRequestWithWidth:320 height:-1];
-	[box setSizeRequestWithWidth:320 height:-1];
+	[scrolledFirstWindow setSizeRequestWithWidth:160 height:-1];
+	[toolbarSecond setSizeRequestWithWidth:160 height:-1];
 
 	OGTKPaned *hpaned = [[OGTKPaned alloc] init:GTK_ORIENTATION_HORIZONTAL];
 
-	hpaned.startChild = toolbarLeft;
-	hpaned.endChild = box;
+	hpaned.startChild = scrolledFirstWindow;
+	hpaned.endChild = toolbarSecond;
 
 	window.child = hpaned;
 
@@ -127,6 +213,15 @@
 	[transferButton connectSignal:@"clicked"
 	                       target:self
 	                     selector:@selector(transfer:)];
+
+	OGListStore *addressBooksModel =
+	    self.evolutionService.addressbookSources;
+
+	[addressBooksList
+	    bindModelWithModel:(GListModel *)[addressBooksModel castedGObject]
+	      createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
+	              userData:NULL
+	      userDataFreeFunc:NULL];
 }
 
 // Action

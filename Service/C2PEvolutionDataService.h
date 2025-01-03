@@ -21,6 +21,8 @@ OF_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) OGEBookClient *client;
 @property (nonatomic) GSList *contacts;
 
+- (OGListStore *)addressbookSources;
+
 @end
 
 OF_ASSUME_NONNULL_END
