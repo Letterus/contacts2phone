@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import "C2PGTKApplicationDelegate.h"
+#import "C2PGTKAppController.h"
 #import <OGAdw/OGAdw-Umbrella.h>
 #import <OGdk4/OGdk4-Umbrella.h>
 #import <OGio/OGio-Umbrella.h>
@@ -25,7 +25,7 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 	return [row castedGObject];
 }
 
-@implementation C2PGTKApplicationDelegate
+@implementation C2PGTKAppController
 @synthesize app = _app;
 @synthesize evolutionService = _evolutionService;
 @synthesize phoneDirectory = _phoneDirectory;
@@ -59,9 +59,9 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 	int ret;
 
 	// GTK runloop
-	self.app = [[OGTKApplication alloc]
+	self.app = [[[OGTKApplication alloc]
 	    initWithApplicationId:@"org.codeberg.Letterus.contacts2phone"
-	                    flags:G_APPLICATION_DEFAULT_FLAGS];
+	                    flags:G_APPLICATION_DEFAULT_FLAGS] autorelease];
 
 	/*	[self.app connectSignal:@"startup"
 	                         target:self

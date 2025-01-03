@@ -13,7 +13,7 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface C2PGTKApplicationDelegate: OFObject
+@interface C2PGTKAppController: OFObject
 {
 	OGTKApplication *_app;
 	C2PEvolutionDataService *_evolutionService;

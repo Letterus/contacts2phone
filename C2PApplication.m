@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+#import "Controller/GTK/C2PGTKAppController.h"
 #import "Model/C2PIpPhoneDirectory.h"
 #import "Service/C2PEvolutionDataService.h"
-#import "View/GTK/C2PGTKApplicationDelegate.h"
 #import <ObjFW/ObjFW.h>
 
 @interface C2PApplication: OFObject <OFApplicationDelegate>
@@ -29,13 +29,14 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	    [[C2PIpPhoneDirectory alloc] init];
 
 	// #ifdef LINUX
-	C2PGTKApplicationDelegate *gtkApplicationDelegate =
-	    [[C2PGTKApplicationDelegate alloc] initWithEDS:evolutionService
-	                                    phoneDirectory:phoneDirectory];
+	C2PGTKAppController *gtkAppController = [[[C2PGTKAppController alloc]
+	       initWithEDS:evolutionService
+	    phoneDirectory:phoneDirectory] autorelease];
+
 	[evolutionService release];
 	[phoneDirectory release];
-	
-	[OFApplication terminateWithStatus:[gtkApplicationDelegate launch]];
+
+	[OFApplication terminateWithStatus:[gtkAppController launch]];
 }
 
 @end
