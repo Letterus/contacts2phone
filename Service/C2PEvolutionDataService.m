@@ -48,8 +48,8 @@
 
 - (OGListStore *)addressbookSources
 {
-	OGListStore *addressBookListStore =
-	    [[[OGListStore alloc] initWithItemType:e_source_get_type()] autorelease];
+	OGListStore *addressBookListStore = [[[OGListStore alloc]
+	    initWithItemType:e_source_get_type()] autorelease];
 
 	GList *sourceList = [self.registry listSources:@"Address Book"];
 
@@ -95,7 +95,8 @@
 	OGCancellable *cble = [[[OGCancellable alloc] init] autorelease];
 
 	@try {
-		registry = [[OGESourceRegistry alloc] initSync:cble];
+		registry =
+		    [[OGESourceRegistry alloc] initWithCancellableSync:cble];
 	} @catch (id e) {
 		[registry release];
 		@throw e;
@@ -110,9 +111,10 @@
 	OGEBookClient *client;
 	OGCancellable *cble = [[[OGCancellable alloc] init] autorelease];
 
-	client = [OGEBookClient connectSyncWithSource:addressbook
-	                      waitForConnectedSeconds:1
-	                                  cancellable:cble];
+	client =
+	    (OGEBookClient *)[OGEBookClient connectSyncWithSource:addressbook
+	                                  waitForConnectedSeconds:1
+	                                              cancellable:cble];
 
 	return client;
 }

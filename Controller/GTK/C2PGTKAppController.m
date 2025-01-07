@@ -230,8 +230,6 @@ autorelease]; [provider loadFromString:@"style.css"];
 	[self.phoneDirectory
 	    importFromEvolutionBook:self.evolutionService.contacts];
 	[OFStdOut writeString:self.phoneDirectory.stringBySerializing];
-
-	[OFStdErr writeLine:@"Finished!"];
 }
 
 @end

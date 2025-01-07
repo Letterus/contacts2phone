@@ -78,8 +78,8 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 			[self.entries addObject:newEntry];
 
-			OFLog(@"Added to Directory Entry: %@",
-			    [newEntry description]);
+//			OFLog(@"Added to Directory Entry: %@",
+//			    [newEntry description]);
 
 			[newEntry release];
 		}
