@@ -49,7 +49,7 @@
 - (OGListStore *)addressbookSources
 {
 	OGListStore *addressBookListStore =
-	    [[[OGListStore alloc] init:e_source_get_type()] autorelease];
+	    [[[OGListStore alloc] initWithItemType:e_source_get_type()] autorelease];
 
 	GList *sourceList = [self.registry listSources:@"Address Book"];
 

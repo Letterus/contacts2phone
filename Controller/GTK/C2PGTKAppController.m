@@ -22,7 +22,7 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 	[row addCssClass:@"property"];
 
-	return [row castedGObject];
+	return GTK_WIDGET([row castedGObject]);
 }
 
 @implementation C2PGTKAppController
@@ -102,7 +102,7 @@ autorelease]; [provider loadFromString:@"style.css"];
 {
 	// Window
 	OGTKApplicationWindow *window =
-	    [[OGTKApplicationWindow alloc] init:self.app];
+	    [[OGTKApplicationWindow alloc] initWithApplication:self.app];
 
 	[window setDefaultSizeWithWidth:640 height:480];
 	window.title = @"Transfer contacts to SNOM IP phone base";
@@ -113,7 +113,7 @@ autorelease]; [provider loadFromString:@"style.css"];
 	OGTKListBox *addressBooksList = [[OGTKListBox alloc] init];
 
 	OGTKLabel *addressBooksLabel =
-	    [[OGTKLabel alloc] init:@"Address books - select one to transfer:"];
+	    [[OGTKLabel alloc] initWithStr:@"Address books - select one to transfer:"];
 	addressBooksLabel.halign = GTK_ALIGN_START;
 
 	OGTKBox *addressBooksListBox =
@@ -200,8 +200,8 @@ autorelease]; [provider loadFromString:@"style.css"];
 	[scrolledFirstWindow setSizeRequestWithWidth:160 height:-1];
 	[toolbarSecond setSizeRequestWithWidth:160 height:-1];
 
-	OGTKPaned *hpaned = [[OGTKPaned alloc] init:GTK_ORIENTATION_HORIZONTAL];
-
+	OGTKPaned *hpaned = [[OGTKPaned alloc] initWithOrientation:GTK_ORIENTATION_HORIZONTAL];
+ 
 	hpaned.startChild = scrolledFirstWindow;
 	hpaned.endChild = toolbarSecond;
 
