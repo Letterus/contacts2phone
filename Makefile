@@ -9,7 +9,7 @@ LIBS := $$(objfw-config --package ObjGTK4 --package OGAdw --package OGEBook --pa
 
 OBJ := obj
 
-SOURCES := $(wildcard *.m) $(wildcard Service/*.m) $(wildcard Controller/GTK/*.m) $(wildcard View/GTK/*.m) $(wildcard Exception/*.m) $(wildcard Model/*.m)
+SOURCES := $(wildcard src/*.m) $(wildcard src/Service/*.m) $(wildcard src/Controller/GTK/*.m) $(wildcard src/Exception/*.m) $(wildcard src/Model/*.m)
 OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(SOURCES))
 
 contacts2phone: $(OBJECTS)
