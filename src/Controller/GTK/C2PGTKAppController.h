@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#import <ObjGTK4/ObjGTK4-Umbrella.h>
-#import "../../Service/C2PEvolutionDataService.h"
 #import "../../Model/C2PIpPhoneDirectory.h"
+#import "../../Service/C2PEvolutionDataService.h"
+#import <ObjGTK4/ObjGTK4-Umbrella.h>
 
 OF_ASSUME_NONNULL_BEGIN
 

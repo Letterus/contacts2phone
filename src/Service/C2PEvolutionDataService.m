@@ -48,8 +48,8 @@
 
 - (OGListStore *)addressbookSources
 {
-	OGListStore *addressBookListStore = [[[OGListStore alloc]
-	    initWithItemType:e_source_get_type()] autorelease];
+	OGListStore *addressBookListStore =
+	    [OGListStore listStore:e_source_get_type()];
 
 	GList *sourceList = [self.registry listSources:@"Address Book"];
 
@@ -92,11 +92,10 @@
 - (OGESourceRegistry *)retrieveRegistry
 {
 	OGESourceRegistry *registry;
-	OGCancellable *cble = [[[OGCancellable alloc] init] autorelease];
 
 	@try {
 		registry =
-		    [[OGESourceRegistry alloc] initWithCancellableSync:cble];
+		    [OGESourceRegistry sourceRegistrySync:nil];
 	} @catch (id e) {
 		[registry release];
 		@throw e;
@@ -109,12 +108,11 @@
 {
 	OGESource *addressbook = self.defaultAddressbookSource;
 	OGEBookClient *client;
-	OGCancellable *cble = [[[OGCancellable alloc] init] autorelease];
 
 	client =
 	    (OGEBookClient *)[OGEBookClient connectSyncWithSource:addressbook
 	                                  waitForConnectedSeconds:1
-	                                              cancellable:cble];
+	                                              cancellable:nil];
 
 	return client;
 }
@@ -125,11 +123,10 @@
 
 	GSList *contactsList = NULL;
 	OFString *sexp = @"";
-	OGCancellable *cble = [[[OGCancellable alloc] init] autorelease];
 
 	[client contactsSyncWithSexp:sexp
 	                 outContacts:&contactsList
-	                 cancellable:cble];
+	                 cancellable:nil];
 
 	if (contactsList == NULL)
 		@throw [C2PDescriptionException
