@@ -62,10 +62,6 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 	    applicationWithApplicationId:@"org.codeberg.Letterus.contacts2phone"
 	                           flags:G_APPLICATION_DEFAULT_FLAGS];
 
-	/*	[self.app connectSignal:@"startup"
-	                         target:self
-	                       selector:@selector(loadCSS:)];*/
-
 	[self.app connectSignal:@"activate"
 	                 target:self
 	               selector:@selector(activateApplication:)];
@@ -76,18 +72,6 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 	return [self.app runWithArgc:*argc argv:*argv];
 }
-
-/*- (void)loadCSS:(OGTKApplication *)app;
-{
-        OGTKCssProvider *provider = [[[OGTKCssProvider alloc] init]
-autorelease]; [provider loadFromString:@"style.css"];
-
-        [OGTKStyleContext
-            addProviderForDisplayWithDisplay:[OGGdkDisplay default]
-                                    provider:[provider castedGObject]
-                                    priority:
-                                        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION];
-}*/
 
 - (void)activateApplication:(OGTKApplication *)app
 {
