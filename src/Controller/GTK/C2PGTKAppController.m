@@ -103,9 +103,9 @@ autorelease]; [provider loadFromString:@"style.css"];
 	// `Gtk::Widget::Class::set_template_from_resource()` over explicit
 	// `Gtk::Builder`
 	OGTKBuilder *builder =
-	    [OGTKBuilder builderFromFile:@"res/GTK/UI/MainView.ui"];
+	    [OGTKBuilder builderFromFileWithFilename:@"res/GTK/UI/MainView.ui"];
 
-	OGTKWindow *mainWindow = (OGTKWindow *)[builder object:@"mainWindow"];
+	OGTKWindow *mainWindow = (OGTKWindow *)[builder objectWithName:@"mainWindow"];
 	[mainWindow setApplication:app];
 
 	[mainWindow present];

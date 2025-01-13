@@ -102,11 +102,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     fromEvolutionContact:(OGEContact *)econtact
 {
 	OFString *familyname =
-	    [self stringFromPointer:[econtact get:E_CONTACT_FAMILY_NAME]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_FAMILY_NAME]];
 	OFString *givenname =
-	    [self stringFromPointer:[econtact get:E_CONTACT_GIVEN_NAME]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_GIVEN_NAME]];
 	OFString *fullname =
-	    [self stringFromPointer:[econtact get:E_CONTACT_FULL_NAME]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_FULL_NAME]];
 
 	if ([self isValidNameField:familyname]) {
 		if ([self isValidNameField:givenname])
@@ -129,13 +129,13 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
        fromEvolutionContact:(OGEContact *)econtact
 {
 	OFString *primary =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_PRIMARY]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_PRIMARY]];
 	OFString *home =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_HOME]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_HOME]];
 	OFString *home2 =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_HOME_2]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_HOME_2]];
 	OFString *other =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_OTHER]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_OTHER]];
 
 	if ([self isValidPhoneField:primary]) {
 		primary = [self cleanPhoneNumber:primary];
@@ -166,11 +166,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     fromEvolutionContact:(OGEContact *)econtact
 {
 	OFString *business =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_BUSINESS]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_BUSINESS]];
 	OFString *business2 =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_BUSINESS_2]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_BUSINESS_2]];
 	OFString *company =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_COMPANY]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_COMPANY]];
 
 	if ([self isValidPhoneField:business]) {
 		entry.office = [self cleanPhoneNumber:business];
@@ -192,11 +192,11 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
     fromEvolutionContact:(OGEContact *)econtact
 {
 	OFString *mobile =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_MOBILE]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_MOBILE]];
 	OFString *pager =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_PAGER]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_PAGER]];
 	OFString *car =
-	    [self stringFromPointer:[econtact get:E_CONTACT_PHONE_CAR]];
+	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_CAR]];
 
 	if ([self isValidPhoneField:mobile]) {
 		entry.mobile = [self cleanPhoneNumber:mobile];
