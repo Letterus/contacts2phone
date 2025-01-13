@@ -91,13 +91,13 @@ autorelease]; [provider loadFromString:@"style.css"];
 
 - (void)activateApplication:(OGTKApplication *)app
 {
-	[self buildUI:app];
+	[self bindUI:app];
 
 	// Setup controller
 	// Bind actions
 }
 
-- (void)buildUI:(OGTKApplication *)app
+- (void)bindUI:(OGTKApplication *)app
 {
 	// TODO: Use
 	// `Gtk::Widget::Class::set_template_from_resource()` over explicit

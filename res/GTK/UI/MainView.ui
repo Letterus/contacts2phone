@@ -6,17 +6,38 @@
     <property name="default-height">480</property>
     <property name="default-width">640</property>
     <property name="title" translatable="yes">Transfer contacts to SNOM IP phone base</property>
+    <property name="titlebar">
+      <object class="GtkGrid">
+        <property name="visible">false</property>
+      </object>
+    </property>
     <property name="child">
       <object class="GtkPaned" id="hpaned">
         <property name="orientation">horizontal</property>
-        <property name="width-request">640</property>
-        <property name="height-request">360</property>
+        <property name="resize-start-child">false</property>
+        <property name="shrink-end-child">false</property>
+        <property name="shrink-start-child">false</property>
         <child>
           <object class="AdwToolbarView" id="toolbarList">
             <property name="bottom-bar-style">ADW_TOOLBAR_RAISED</property>
             <property name="width-request">320</property>
             <child type="top">
-              <object class="AdwHeaderBar"/>
+              <object class="GtkHeaderBar">
+                <property name="show-title-buttons">false</property>
+                <property name="title-widget">
+                  <object class="GtkGrid">
+                    <property name="visible">false</property>
+                  </object>
+                </property>
+                <style>
+                  <class name="flat" />
+                </style>
+                <child type="start">
+                  <object class="GtkWindowControls">
+                    <property name="side">start</property>
+                  </object>
+                </child>
+              </object>
             </child>
             <property name="content">
               <object class="GtkScrolledWindow" id="scrolledAddressbookWindow">
@@ -37,6 +58,24 @@
         <child>
           <object class="AdwToolbarView" id="toolbarForm">
             <property name="width-request">320</property>
+            <child type="top">
+              <object class="GtkHeaderBar">
+                <property name="show-title-buttons">false</property>
+                <property name="title-widget">
+                  <object class="GtkGrid">
+                    <property name="visible">false</property>
+                  </object>
+                </property>
+                <style>
+                  <class name="flat" />
+                </style>
+                <child type="end">
+                  <object class="GtkWindowControls">
+                    <property name="side">end</property>
+                  </object>
+                </child>
+              </object>
+            </child>
             <property name="content">
               <object class="GtkScrolledWindow" id="scrolledFormWindow">
                 <property name="child">
