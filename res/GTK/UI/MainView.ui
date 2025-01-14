@@ -49,6 +49,7 @@
                 <child type="end">
                   <object class="GtkButton" id="refreshButton">
                     <property name="label">Refresh</property>
+                    <property name="icon-name">view-refresh</property>
                   </object>
                 </child>
               </object>
@@ -58,14 +59,12 @@
         <child>
           <object class="AdwToolbarView" id="toolbarForm">
             <property name="width-request">320</property>
+            <style>
+              <class name="view" />
+            </style>
             <child type="top">
               <object class="GtkHeaderBar">
                 <property name="show-title-buttons">false</property>
-                <property name="title-widget">
-                  <object class="GtkGrid">
-                    <property name="visible">false</property>
-                  </object>
-                </property>
                 <style>
                   <class name="flat" />
                 </style>
