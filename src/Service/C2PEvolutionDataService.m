@@ -49,9 +49,10 @@
 - (OGListStore *)addressbookSources
 {
 	OGListStore *addressBookListStore =
-	    [OGListStore listStore:e_source_get_type()];
+	    [OGListStore listStoreWithItemType:e_source_get_type()];
 
-	GList *sourceList = [self.registry listSources:@"Address Book"];
+	GList *sourceList =
+	    [self.registry listSourcesWithExtensionName:@"Address Book"];
 
 	for (GList *element = sourceList; element != NULL;
 	     element = element->next) {
@@ -59,7 +60,7 @@
 		// OFLog(@"Addressbook name %s, UUID: %s",
 		//     e_source_get_display_name(source),
 		//     e_source_get_uid(source));
-		[addressBookListStore append:source];
+		[addressBookListStore appendWithItem:source];
 		g_object_unref(source);
 	}
 	g_list_free(sourceList);
@@ -95,7 +96,7 @@
 
 	@try {
 		registry =
-		    [OGESourceRegistry sourceRegistrySync:nil];
+		    [OGESourceRegistry sourceRegistrySyncWithCancellable:nil];
 	} @catch (id e) {
 		[registry release];
 		@throw e;
