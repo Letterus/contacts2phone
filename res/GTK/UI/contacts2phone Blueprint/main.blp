@@ -1,0 +1,167 @@
+using Gtk 4.0;
+using Adw 1;
+
+Window mainWindow {
+  default-width: 720;
+  default-height: 480;
+  title: _("Transfer contacts to SNOM IP phone base");
+
+  Paned hpaned {
+    orientation: horizontal;
+
+    Adw.ToolbarView {
+      width-request: 360;
+      bottom-bar-style: raised;
+
+      content: ScrolledWindow scrolledAddressbookWindow {
+        ListBox {
+          selection-mode: single;
+          show-separators: true;
+
+          ListBoxRow {
+            Box {
+              orientation: horizontal;
+              margin-top: 12;
+              margin-bottom: 12;
+              margin-start: 12;
+              margin-end: 12;
+              halign: start;
+
+              Image {
+                icon-name: "address-book-new";
+                margin-end: 12;
+              }
+
+              Label {
+                label: _("Default AddressBook");
+
+                styles [
+                  "heading",
+                ]
+              }
+            }
+          }
+        }
+      };
+
+      [bottom]
+      ActionBar {
+        [end]
+        Button refreshButton {
+          label: _("Refresh");
+          icon-name: "view-refresh";
+        }
+      }
+    }
+
+    Adw.ToolbarView {
+      width-request: 360;
+
+      content: ScrolledWindow scrolledFormWindow {
+        Box {
+          orientation: vertical;
+          margin-top: 32;
+          margin-bottom: 12;
+          margin-start: 12;
+          margin-end: 12;
+          halign: center;
+
+          Label {
+            label: _("SNOM IP phone base");
+            margin-bottom: 20;
+
+            styles [
+              "title-4",
+            ]
+          }
+
+          Grid form {
+            margin-top: 12;
+            margin-bottom: 12;
+            margin-start: 12;
+            margin-end: 12;
+            row-spacing: 12;
+            column-spacing: 12;
+
+            Label ipAddressLabel {
+              label: _("IP address:");
+
+              layout {
+                row: "0";
+                column: "0";
+              }
+            }
+
+            Entry ipAddressEntry {
+              layout {
+                row: "0";
+                column: "1";
+              }
+            }
+
+            Label usernameLabel {
+              label: _("User name:");
+
+              layout {
+                row: "1";
+                column: "0";
+              }
+            }
+
+            Entry usernameEntry {
+              layout {
+                row: "1";
+                column: "1";
+              }
+            }
+
+            Label passwordLabel {
+              label: _("User password:");
+
+              layout {
+                row: "2";
+                column: "0";
+              }
+            }
+
+            Entry passwordEntry {
+              visibility: false;
+              input-purpose: password;
+
+              layout {
+                row: "2";
+                column: "1";
+              }
+            }
+
+            Button testButton {
+              name: "TestButton";
+              label: _("Test");
+              use-underline: true;
+
+              layout {
+                row: "3";
+                column: "0";
+              }
+            }
+
+            Button transferButton {
+              name: "TransferButton";
+              label: _("Transfer");
+              use-underline: true;
+
+              styles [
+                "suggested-action",
+              ]
+
+              layout {
+                row: "3";
+                column: "1";
+              }
+            }
+          }
+        }
+      };
+    }
+  }
+}
