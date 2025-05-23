@@ -22,7 +22,7 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 	//g_object_bind_property(
 	//    item, "display-name", [row castedGObject], "subtitle", G_BINDING_SYNC_CREATE);
 
-	return GTK_WIDGET([row castedGObject]);
+	//return GTK_WIDGET([row castedGObject]);
 }
 
 @implementation C2PGTKAppController
@@ -92,10 +92,10 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 	OGListStore *addressBooksModel = self.evolutionService.addressbookSources;
 	OGTKListBox *addressBooksList = (OGTKListBox *)[builder objectWithName:@"addressBooksList"];
-	[addressBooksList bindModel:(GListModel *)[addressBooksModel castedGObject]
-	           createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
-	                   userData:NULL
-	           userDataFreeFunc:NULL];
+	// [addressBooksList bindModel:(GListModel *)[addressBooksModel castedGObject]
+	//            createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
+	//                    userData:NULL
+	//            userDataFreeFunc:NULL];
 }
 
 // Action
