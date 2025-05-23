@@ -11,15 +11,16 @@
 #import <OGAdw/OGAdw-Umbrella.h>
 #import <OGdk4/OGdk4-Umbrella.h>
 #import <OGio/OGio-Umbrella.h>
+#include <gtk/gtk.h>
 
 static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 {
-	OGAdwActionRow *row = [OGAdwActionRow actionRow];
-	row.title = @"Address book";
-	g_object_bind_property(item, "display-name", [row castedGObject],
-	    "subtitle", G_BINDING_SYNC_CREATE);
+	//OGTKListBoxRow *row = [[OGTKListBoxRow alloc] initWithGObject:(void *)];
 
-	[row addCssClass:@"property"];
+	// Build object…
+
+	//g_object_bind_property(
+	//    item, "display-name", [row castedGObject], "subtitle", G_BINDING_SYNC_CREATE);
 
 	return GTK_WIDGET([row castedGObject]);
 }
@@ -58,17 +59,14 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 	int ret;
 
 	// GTK runloop
-	self.app = [OGTKApplication
-	    applicationWithApplicationId:@"org.codeberg.Letterus.contacts2phone"
-	                           flags:G_APPLICATION_DEFAULT_FLAGS];
+	self.app =
+	    [OGTKApplication applicationWithApplicationId:@"org.codeberg.Letterus.contacts2phone"
+	                                            flags:G_APPLICATION_DEFAULT_FLAGS];
 
-	[self.app connectSignal:@"activate"
-	                 target:self
-	               selector:@selector(activateApplication:)];
+	[self.app connectSignal:@"activate" target:self selector:@selector(activateApplication:)];
 
 	// ObjFW runloop
-	[[OFApplication sharedApplication] getArgumentCount:&argc
-	                                  andArgumentValues:&argv];
+	[[OFApplication sharedApplication] getArgumentCount:&argc andArgumentValues:&argv];
 
 	return [self.app runWithArgc:*argc argv:*argv];
 }
@@ -83,37 +81,27 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 - (void)bindUI:(OGTKApplication *)app
 {
-	// TODO: Use
-	// `Gtk::Widget::Class::set_template_from_resource()` over explicit
-	// `Gtk::Builder`
-	OGTKBuilder *builder =
-	    [OGTKBuilder builderFromFileWithFilename:@"res/GTK/UI/MainView.ui"];
+	OGTKBuilder *builder = [OGTKBuilder builderFromFileWithFilename:@"res/GTK/UI/MainView.ui"];
 
 	OGTKWindow *mainWindow = (OGTKWindow *)[builder objectWithName:@"mainWindow"];
 	[mainWindow setApplication:app];
-
 	[mainWindow present];
 
-	// [transferButton connectSignal:@"clicked"
-	//                        target:self
-	//                      selector:@selector(transfer:)];
+	OGTKButton *transferButton = (OGTKButton *)[builder objectWithName:@"transferButton"];
+	[transferButton connectSignal:@"clicked" target:self selector:@selector(transfer:)];
 
-	// OGListStore *addressBooksModel =
-	//     self.evolutionService.addressbookSources;
-
-	// [addressBooksList
-	//     bindModelWithModel:(GListModel *)[addressBooksModel
-	//     castedGObject]
-	//       createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
-	//               userData:NULL
-	//       userDataFreeFunc:NULL];
+	OGListStore *addressBooksModel = self.evolutionService.addressbookSources;
+	OGTKListBox *addressBooksList = (OGTKListBox *)[builder objectWithName:@"addressBooksList"];
+	[addressBooksList bindModel:(GListModel *)[addressBooksModel castedGObject]
+	           createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
+	                   userData:NULL
+	           userDataFreeFunc:NULL];
 }
 
 // Action
 - (void)transfer:(id)emitter
 {
-	[self.phoneDirectory
-	    importFromEvolutionBook:self.evolutionService.contacts];
+	[self.phoneDirectory importFromEvolutionBook:self.evolutionService.contacts];
 	[OFStdOut writeString:self.phoneDirectory.stringBySerializing];
 }
 

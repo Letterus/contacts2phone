@@ -15,37 +15,9 @@
             <property name="content">
               <object class="GtkScrolledWindow" id="scrolledAddressbookWindow">
                 <child>
-                  <object class="GtkListBox">
+                  <object class="GtkListBox" id="addressBooksList">
                     <property name="selection-mode">1</property>
                     <property name="show-separators">true</property>
-                    <child>
-                      <object class="GtkListBoxRow">
-                        <child>
-                          <object class="GtkBox">
-                            <property name="orientation">0</property>
-                            <property name="margin-top">12</property>
-                            <property name="margin-bottom">12</property>
-                            <property name="margin-start">12</property>
-                            <property name="margin-end">12</property>
-                            <property name="halign">1</property>
-                            <child>
-                              <object class="GtkImage">
-                                <property name="icon-name">address-book-new</property>
-                                <property name="margin-end">12</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="label" translatable="yes">Default AddressBook</property>
-                                <style>
-                                  <class name="heading"/>
-                                </style>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>

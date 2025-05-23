@@ -9,4 +9,4 @@ show-console=true
 width=960
 height=1173
 edited=true
-user-interface-language='xml'
+user-interface-language='blueprint'

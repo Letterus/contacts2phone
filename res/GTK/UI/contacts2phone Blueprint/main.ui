@@ -19,7 +19,7 @@
                     <property name="selection-mode">1</property>
                     <property name="show-separators">true</property>
                     <child>
-                      <object class="GtkListBoxRow">
+                      <object class="GtkListBoxRow" id="addressBooksList">
                         <child>
                           <object class="GtkBox">
                             <property name="orientation">0</property>

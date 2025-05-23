@@ -29,8 +29,6 @@ OF_ASSUME_NONNULL_BEGIN
 
 - (int)launch;
 
-// - (void)loadCSS:(OGTKApplication *)app;
-
 - (void)activateApplication:(OGTKApplication *)app;
 
 @end
