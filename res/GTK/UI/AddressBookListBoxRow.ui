@@ -11,7 +11,7 @@
         <property name="halign">1</property>
         <child>
           <object class="GtkImage">
-            <property name="icon-name">address-book-new</property>
+            <property name="icon-name">x-office-address-book</property>
             <property name="margin-end">12</property>
           </object>
         </child>
