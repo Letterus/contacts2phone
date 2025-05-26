@@ -47,3 +47,7 @@ install: contacts2phone
 
 run: contacts2phone
 	@./contacts2phone
+
+clean:
+	@rm -rf $(OBJ)
+	@rm res/GTK/UI/resource.c
