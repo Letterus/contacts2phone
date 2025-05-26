@@ -8,12 +8,24 @@ OBJCFLAGS := $$(objfw-config --objcflags)
 LIBS := $$(objfw-config --package ObjGTK4 --package OGAdw --package OGEBook --package OGEBookContacts --package OGEDataServer --package OGCamel --package OGObject --rpath --libs)
 
 OBJ := obj
+RES := res
 
-SOURCES := $(wildcard src/*.m) $(wildcard src/Service/*.m) $(wildcard src/Controller/GTK/*.m) $(wildcard src/View/GTK/*.m)  $(wildcard src/Exception/*.m) $(wildcard src/Model/*.m)
-OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(SOURCES))
+M_SOURCES := $(wildcard src/*.m) $(wildcard src/Service/*.m) $(wildcard src/Controller/GTK/*.m) $(wildcard src/Exception/*.m) $(wildcard src/Model/*.m)
+OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(M_SOURCES)) $(OBJ)/View/GTK/C2PAddressBookListBoxRow.o $(OBJ)/$(RES)/GTK/UI/resource.o 
 
 contacts2phone: $(OBJECTS)
 	$(CC) $^ -o $@ $(LIBS)
+
+$(RES)/GTK/UI/resource.c: $(RES)/GTK/UI/c2p.gresource.xml
+	$$(glib-compile-resources $< --target=$@ --generate-source)
+
+$(OBJ)/$(RES)/GTK/UI/%.o: res/GTK/UI/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ)/View/GTK/%.o: src/View/GTK/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: %.m
 	@mkdir -p $(@D)

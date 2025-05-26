@@ -16,8 +16,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">Default AddressBook</property>
+          <object class="GtkLabel" id="labelWidget">
             <style>
               <class name="heading"/>
             </style>

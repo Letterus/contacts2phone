@@ -30,6 +30,9 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 - (void)dealloc
 {
+	[_phoneDirectory release];
+	[_evolutionService release];
+	[_app release];
 
 	[super dealloc];
 }
@@ -79,7 +82,8 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 - (void)bindUI:(OGTKApplication *)app
 {
-	OGTKBuilder *builder = [OGTKBuilder builderFromFileWithFilename:@"res/GTK/UI/MainView.ui"];
+	OGTKBuilder *builder = [OGTKBuilder
+	    builderFromResourceWithResourcePath:@"/de/devbeejohn/c2p/res/GTK/UI/MainView.ui"];
 
 	OGTKWindow *mainWindow = (OGTKWindow *)[builder objectWithName:@"mainWindow"];
 	[mainWindow setApplication:app];
