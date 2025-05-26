@@ -17,7 +17,7 @@ AlignConsecutiveMacros: AcrossComments
 AlignEscapedNewlines: Left
 AlignTrailingComments: true
 AllowShortBlocksOnASingleLine: Empty
-AlwaysBreakAfterReturnType: None
+AlwaysBreakAfterReturnType: All
 ObjCBlockIndentWidth: 8
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
@@ -25,3 +25,4 @@ PPIndentWidth: 1
 SpaceBeforeInheritanceColon: false
 SpaceBeforeParens: ControlStatements
 SpacesBeforeTrailingComments: 2
+AllowShortEnumsOnASingleLine: false
