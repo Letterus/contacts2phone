@@ -114,8 +114,6 @@ static void c2p_addressbook_list_box_row_class_init(C2PAddressBookListBoxRowClas
 static void c2p_addressbook_list_box_row_init(C2PAddressBookListBoxRow *self)
 {
 	gtk_widget_init_template(GTK_WIDGET(self));
-
-	// It is now possible to access self->entry and self->button
 }
 
 C2PAddressBookListBoxRow *c2p_addressbook_list_box_row_new()
