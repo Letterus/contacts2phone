@@ -8,6 +8,7 @@
  */
 
 #import "C2PGTKAppController.h"
+#include "../../View/GTK/C2PAddressBookListBoxRow.h"
 #import <OGAdw/OGAdw-Umbrella.h>
 #import <OGdk4/OGdk4-Umbrella.h>
 #import <OGio/OGio-Umbrella.h>
@@ -15,14 +16,11 @@
 
 static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 {
-	//OGTKListBoxRow *row = [[OGTKListBoxRow alloc] initWithGObject:(void *)];
+	C2PAddressBookListBoxRow *row = c2p_addressbook_list_box_row_new();
 
-	// Build object…
+	g_object_bind_property(item, "display-name", row, "label", G_BINDING_SYNC_CREATE);
 
-	//g_object_bind_property(
-	//    item, "display-name", [row castedGObject], "subtitle", G_BINDING_SYNC_CREATE);
-
-	//return GTK_WIDGET([row castedGObject]);
+	return GTK_WIDGET(row);
 }
 
 @implementation C2PGTKAppController
@@ -92,10 +90,11 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 	OGListStore *addressBooksModel = self.evolutionService.addressbookSources;
 	OGTKListBox *addressBooksList = (OGTKListBox *)[builder objectWithName:@"addressBooksList"];
-	// [addressBooksList bindModel:(GListModel *)[addressBooksModel castedGObject]
-	//            createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
-	//                    userData:NULL
-	//            userDataFreeFunc:NULL];
+
+	[addressBooksList bindModel:(GListModel *)[addressBooksModel castedGObject]
+	           createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
+	                   userData:NULL
+	           userDataFreeFunc:NULL];
 }
 
 // Action
