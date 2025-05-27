@@ -111,7 +111,7 @@ c2p_addressbook_list_box_row_class_init(C2PAddressBookListBoxRowClass *klass)
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
 
 	gtk_widget_class_set_template_from_resource(
-	    widget_class, "/de/devbeejohn/c2p/res/GTK/UI/AddressBookListBoxRow.ui");
+	    widget_class, "/de/devbeejohn/c2p/AddressBookListBoxRow.ui");
 
 	gtk_widget_class_bind_template_child(widget_class, C2PAddressBookListBoxRow, labelWidget);
 }

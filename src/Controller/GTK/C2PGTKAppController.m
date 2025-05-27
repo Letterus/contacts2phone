@@ -83,7 +83,7 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 - (void)bindUI:(OGTKApplication *)app
 {
 	OGTKBuilder *builder = [OGTKBuilder
-	    builderFromResourceWithResourcePath:@"/de/devbeejohn/c2p/res/GTK/UI/MainView.ui"];
+	    builderFromResourceWithResourcePath:@"/de/devbeejohn/c2p/MainView.ui"];
 
 	OGTKWindow *mainWindow = (OGTKWindow *)[builder objectWithName:@"mainWindow"];
 	[mainWindow setApplication:app];
