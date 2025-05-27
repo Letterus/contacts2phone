@@ -11,13 +11,13 @@ OBJ := obj
 RES := res
 
 M_SOURCES := $(wildcard src/*.m) $(wildcard src/Service/*.m) $(wildcard src/Controller/GTK/*.m) $(wildcard src/Exception/*.m) $(wildcard src/Model/*.m)
-OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(M_SOURCES)) $(OBJ)/View/GTK/C2PAddressBookListBoxRow.o $(OBJ)/$(RES)/GTK/UI/resource.o 
+OBJECTS := $(patsubst %.m, $(OBJ)/%.o, $(M_SOURCES)) $(OBJ)/View/GTK/C2PAddressBookListRow.o $(OBJ)/$(RES)/GTK/UI/resource.o 
 
 contacts2phone: $(OBJECTS)
 	$(CC) $^ -o $@ $(LIBS)
 
 $(RES)/GTK/UI/resource.c: $(RES)/GTK/UI/c2p.gresource.xml
-	$$(glib-compile-resources $< --target=$@ --generate-source)
+	$$(glib-compile-resources --sourcedir $(RES)/GTK/UI/ $< --target=$@ --generate-source)
 
 $(OBJ)/$(RES)/GTK/UI/%.o: res/GTK/UI/%.c
 	@mkdir -p $(@D)

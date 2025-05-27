@@ -8,7 +8,7 @@
  */
 
 #import "C2PGTKAppController.h"
-#include "../../View/GTK/C2PAddressBookListBoxRow.h"
+#include "../../View/GTK/C2PAddressBookListRow.h"
 #import <OGAdw/OGAdw-Umbrella.h>
 #import <OGdk4/OGdk4-Umbrella.h>
 #import <OGio/OGio-Umbrella.h>
@@ -16,7 +16,7 @@
 
 static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 {
-	C2PAddressBookListBoxRow *row = c2p_addressbook_list_box_row_new();
+	C2PAddressBookListRow *row = c2_p_address_book_list_row_new();
 
 	g_object_bind_property(item, "display-name", row, "label", G_BINDING_SYNC_CREATE);
 
