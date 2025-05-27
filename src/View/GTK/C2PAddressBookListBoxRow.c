@@ -34,9 +34,6 @@ c2p_addressbook_list_box_row_dispose(GObject *gobject)
 
 	C2PAddressBookListBoxRow *self = C2P_ADDRESSBOOK_LIST_BOX_ROW(gobject);
 
-	g_object_unref(self->labelWidget);
-	self->labelWidget = NULL;
-
 	G_OBJECT_CLASS(c2p_addressbook_list_box_row_parent_class)->dispose(gobject);
 }
 
