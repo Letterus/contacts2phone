@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="C2PAddressBookListBoxRow" parent="GtkListBoxRow">
+  <template class="C2PAddressBookListRow" parent="GtkListBoxRow">
     <child>
       <object class="GtkBox">
         <property name="orientation">0</property>
@@ -16,7 +16,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="labelWidget">
+          <object class="GtkLabel" id="label_widget">
             <style>
               <class name="heading"/>
             </style>

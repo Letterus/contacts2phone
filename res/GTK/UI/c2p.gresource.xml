@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/de/devbeejohn/c2p/">
-    <file preprocess="xml-stripblanks" alias="MainView.ui">res/GTK/UI/MainView.ui</file>
-    <file preprocess="xml-stripblanks"alias="AddressBookListBoxRow.ui">res/GTK/UI/AddressBookListBoxRow.ui</file>
+    <file preprocess="xml-stripblanks">MainView.ui</file>
+    <file preprocess="xml-stripblanks">AddressBookListRow.ui</file>
   </gresource>
 </gresources>
