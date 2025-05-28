@@ -16,7 +16,7 @@
 
 static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 {
-	C2PAddressBookListRow *row = c2_p_address_book_list_row_new();
+	C2PAddressBookListRow *row = c2p_address_book_list_row_new();
 
 	g_object_bind_property(item, "display-name", row, "label", G_BINDING_SYNC_CREATE);
 
