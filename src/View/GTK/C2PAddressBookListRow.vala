@@ -6,19 +6,16 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-[CCode (lower_case_cprefix = "c2p_")]
-namespace C2P {
 
-	[GtkTemplate (ui = "/de/devbeejohn/c2p/AddressBookListRow.ui")]
-	class AddressBookListRow : Gtk.ListBoxRow {
-		[GtkChild]
-		unowned Gtk.Label label_widget;
+[GtkTemplate (ui = "/de/devbeejohn/c2p/AddressBookListRow.ui")]
+class C2P.AddressBookListRow : Gtk.ListBoxRow {
+	[GtkChild]
+	unowned Gtk.Label label_widget;
 
-		public string label {
-			get { return label_widget.label; }
-			set { label_widget.label = value; }
-		}
-
-		public int num_contacts { get; set; }
+	public string label {
+		get { return label_widget.label; }
+		set { label_widget.label = value; }
 	}
+
+	public int num_contacts { get; set; }
 }
