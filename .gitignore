@@ -170,4 +170,6 @@ dkms.conf
 contacts2phone
 Directory.xml
 *.sublime-workspace
-res/GTK/UI/resource.c
+res/GTK/UI/*.c
+src/View/GTK/*.c
+src/View/GTK/*.h
