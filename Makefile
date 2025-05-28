@@ -32,7 +32,7 @@ $(OBJ)/src/View/GTK/%.o: src/View/GTK/%.c
 
 $(OBJ)/$(RES)/GTK/UI/%.o: $(RES)/GTK/UI/%.c
 	@mkdir -p $(@D)
-	$(CC) $(OBJCFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(RESOURCE_C_SOURCES): %: $(RES)/GTK/UI/c2p.gresource.xml
 	$$(glib-compile-resources --sourcedir $(RES)/GTK/UI/ $< --target=$@ --generate-source)
