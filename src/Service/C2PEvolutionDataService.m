@@ -16,7 +16,6 @@
 {
 	[_registry release];
 	[_defaultAddressbookSource release];
-	[_client release];
 	g_slist_free_full(_contacts, g_object_unref);
 
 	[super dealloc];
@@ -48,14 +47,11 @@
 
 - (OGListStore *)addressbookSources
 {
-	OGListStore *addressBookListStore =
-	    [OGListStore listStoreWithItemType:e_source_get_type()];
+	OGListStore *addressBookListStore = [OGListStore listStoreWithItemType:e_source_get_type()];
 
-	GList *sourceList =
-	    [self.registry listSourcesWithExtensionName:@"Address Book"];
+	GList *sourceList = [self.registry listSourcesWithExtensionName:@"Address Book"];
 
-	for (GList *element = sourceList; element != NULL;
-	     element = element->next) {
+	for (GList *element = sourceList; element != NULL; element = element->next) {
 		ESource *source = element->data;
 		// OFLog(@"Addressbook name %s, UUID: %s",
 		//     e_source_get_display_name(source),
@@ -68,26 +64,6 @@
 	return addressBookListStore;
 }
 
-- (OGEBookClient *)client
-{
-	if (_client != nil)
-		return _client;
-
-	_client = [self retrieveEBookClient];
-	[_client retain];
-
-	return _client;
-}
-
-- (GSList *)contacts
-{
-	if (_contacts != NULL)
-		return _contacts;
-
-	_contacts = [self retrieveContacts];
-	return _contacts;
-}
-
 #pragma mark - Private methods - fetching data from EDS
 
 - (OGESourceRegistry *)retrieveRegistry
@@ -95,8 +71,7 @@
 	OGESourceRegistry *registry;
 
 	@try {
-		registry =
-		    [OGESourceRegistry sourceRegistrySyncWithCancellable:nil];
+		registry = [OGESourceRegistry sourceRegistrySyncWithCancellable:nil];
 	} @catch (id e) {
 		[registry release];
 		@throw e;
@@ -105,37 +80,25 @@
 	return [registry autorelease];
 }
 
-- (OGEBookClient *)retrieveEBookClient
+- (GSList *)retrieveContactsFromAddressbookSource:(OGESource *)addressbook
 {
-	OGESource *addressbook = self.defaultAddressbookSource;
 	OGEBookClient *client;
 
-	client =
-	    (OGEBookClient *)[OGEBookClient connectSyncWithSource:addressbook
-	                                  waitForConnectedSeconds:1
-	                                              cancellable:nil];
-
-	return client;
-}
-
-- (GSList *)retrieveContacts
-{
-	OGEBookClient *client = self.client;
+	client = (OGEBookClient *)[OGEBookClient connectSyncWithSource:addressbook
+	                                       waitForConnectedSeconds:1
+	                                                   cancellable:nil];
 
 	GSList *contactsList = NULL;
 	OFString *sexp = @"";
 
-	[client contactsSyncWithSexp:sexp
-	                 outContacts:&contactsList
-	                 cancellable:nil];
+	[client contactsSyncWithSexp:sexp outContacts:&contactsList cancellable:nil];
 
 	if (contactsList == NULL)
 		@throw [C2PDescriptionException
-		    exceptionWithDescription:
-		        [OFString
-		            stringWithFormat:@"Could not get any contacts "
-		                             @"from addressbook: %@",
-		            self.defaultAddressbookSource.displayName]];
+		    exceptionWithDescription:[OFString
+		                                 stringWithFormat:@"Could not get any contacts "
+		                                                  @"from addressbook: %@",
+		                                 self.defaultAddressbookSource.displayName]];
 
 	return contactsList;
 }

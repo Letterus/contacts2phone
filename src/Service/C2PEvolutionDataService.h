@@ -18,10 +18,9 @@ OF_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, retain) OGESourceRegistry *registry;
 @property (nonatomic, retain) OGESource *defaultAddressbookSource;
-@property (nonatomic, retain) OGEBookClient *client;
-@property (nonatomic) GSList *contacts;
 
 - (OGListStore *)addressbookSources;
+- (GSList *)retrieveContactsFromAddressbookSource:(OGESource *)addressbook;
 
 @end
 

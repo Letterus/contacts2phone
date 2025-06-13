@@ -14,7 +14,8 @@
 #import <OGio/OGio-Umbrella.h>
 #include <gtk/gtk.h>
 
-static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
+static GtkWidget *
+createAddressbookRow(GObject *item, gpointer user_data)
 {
 	C2PAddressBookListRow *row = c2p_address_book_list_row_new();
 
@@ -82,8 +83,8 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 
 - (void)bindUI:(OGTKApplication *)app
 {
-	OGTKBuilder *builder = [OGTKBuilder
-	    builderFromResourceWithResourcePath:@"/de/devbeejohn/c2p/MainView.ui"];
+	OGTKBuilder *builder =
+	    [OGTKBuilder builderFromResourceWithResourcePath:@"/de/devbeejohn/c2p/MainView.ui"];
 
 	OGTKWindow *mainWindow = (OGTKWindow *)[builder objectWithName:@"mainWindow"];
 	[mainWindow setApplication:app];
@@ -92,20 +93,27 @@ static GtkWidget *createAddressbookRow(GObject *item, gpointer user_data)
 	OGTKButton *transferButton = (OGTKButton *)[builder objectWithName:@"transferButton"];
 	[transferButton connectSignal:@"clicked" target:self selector:@selector(transfer:)];
 
-	OGListStore *addressBooksModel = self.evolutionService.addressbookSources;
-	OGTKListBox *addressBooksList = (OGTKListBox *)[builder objectWithName:@"addressBooksList"];
+	self.addressBooksModel = self.evolutionService.addressbookSources;
+	self.addressBooksList = (OGTKListBox *)[builder objectWithName:@"addressBooksList"];
 
-	[addressBooksList bindModel:(GListModel *)[addressBooksModel castedGObject]
-	           createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
-	                   userData:NULL
-	           userDataFreeFunc:NULL];
+	[self.addressBooksList bindModel:(GListModel *)[self.addressBooksModel castedGObject]
+	                createWidgetFunc:(GtkListBoxCreateWidgetFunc)createAddressbookRow
+	                        userData:NULL
+	                userDataFreeFunc:NULL];
 }
 
 // Action
 - (void)transfer:(id)emitter
 {
-	[self.phoneDirectory importFromEvolutionBook:self.evolutionService.contacts];
-	[OFStdOut writeString:self.phoneDirectory.stringBySerializing];
+	OFLog(@"Selected addressbook: %i", [self.addressBooksList selectedRow].index);
+
+	OGESource *addressbook =
+	    [self.addressBooksModel item:[self.addressBooksList selectedRow].index];
+
+	[self.phoneDirectory
+	    importFromEvolutionBook:[self.evolutionService
+	                                retrieveContactsFromAddressbookSource:addressbook]];
+	//[OFStdOut writeString:self.phoneDirectory.stringBySerializing];
 }
 
 @end

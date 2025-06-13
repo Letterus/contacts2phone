@@ -18,11 +18,15 @@ OF_ASSUME_NONNULL_BEGIN
 	OGTKApplication *_app;
 	C2PEvolutionDataService *_evolutionService;
 	C2PIpPhoneDirectory *_phoneDirectory;
+	OGListStore *_addressBooksModel;
+	OGTKListBox *_addressBooksList;
 }
 
 @property (assign) OGTKApplication *app;
 @property (assign) C2PEvolutionDataService *evolutionService;
 @property (assign) C2PIpPhoneDirectory *phoneDirectory;
+@property (assign) OGListStore *addressBooksModel;
+@property (assign) OGTKListBox *addressBooksList;
 
 - (instancetype)initWithEDS:(C2PEvolutionDataService *)evolutionService
              phoneDirectory:(C2PIpPhoneDirectory *)phoneDirectory;
