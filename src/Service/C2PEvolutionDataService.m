@@ -16,7 +16,6 @@
 {
 	[_registry release];
 	[_defaultAddressbookSource release];
-	g_slist_free_full(_contacts, g_object_unref);
 
 	[super dealloc];
 }
