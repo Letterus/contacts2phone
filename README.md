@@ -1,28 +1,14 @@
 # contacts2phone
 
-Tool to upload contacts from a GNOME addressbook to an Snom VoIP phone (M300/M700/M900) using the [IPPhoneDirectory format](https://service.snom.com/display/wiki/How+to+use+the+Local+Central+Directory+on+M300%2C+M700%2C+M900+DECT+base#HowtousetheLocalCentralDirectoryonM300,M700,M900DECTbase-TheIPPhoneDirectoryformat) (Local Central Directory) (WIP)
-
-## Current usage
-
-Execute and redirect stdout output:
-
-```
-./contacts2phone > Directory.xml
-```
-
-To save directory file locally.
-
-Use this to upload to your IP DECT base directly (if you have curl installed):
-```
- ./contacts2phone | curl -i -X POST -u <adminuser> -F "Directory=@-" http://<ip address>/UploadFile.html
-```
-
-Replace `<adminuser>` and `<ip address>` by your local values. Hit return.
-
-Insert your admin password. You should see HTML output telling you the settings were saved.
+This branch is developing the app featuring a GUI to upload contacts from a GNOME addressbook to an Snom VoIP phone (M300/M700/M900) using the [IPPhoneDirectory format](https://service.snom.com/display/wiki/How+to+use+the+Local+Central+Directory+on+M300%2C+M700%2C+M900+DECT+base#HowtousetheLocalCentralDirectoryonM300,M700,M900DECTbase-TheIPPhoneDirectoryformat) (Local Central Directory) (WIP)
 
 ## Build dependencies
 
-- [objfw-1.x (built with clang)](https://github.com/ObjFW/ObjFW)
-- [OGObject (latest)](https://codeberg.org/ObjGTK/OGObject)
-- [OGEBook (latest)](https://codeberg.org/ObjGTK/OGEBook)
+See [meson file](meson.build).
+
+## How to build
+
+- Install dependencies
+- `meson setup builddir && cd builddir`
+- `meson compile`
+- `sudo meson install`
