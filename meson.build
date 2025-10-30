@@ -2,10 +2,10 @@ project('contacts2phone')
 
 add_languages('cpp', 'objc', 'objcpp', native: false)
 
-objfw = dependency('objfw', version: '>= 1.4.0')
+objfw = dependency('objfw', version: '>= 1.4')
 gtk4 = dependency('gtk4')
 libadwaita = dependency('libadwaita-1', version: '>= 1.5')
-#libebook = dependency('libebook-1.2')
+libebook = dependency('libebook-1.2')
 
 peel = dependency('peel')
 
@@ -27,5 +27,5 @@ subdir('src')
 executable('contacts2phone',
     sources,
     peel_headers,
-    dependencies: [objfw, gtk4, libadwaita, peel]
+    dependencies: [objfw, peel, gtk4, libadwaita, libebook]
 )
