@@ -1,0 +1,31 @@
+project('contacts2phone')
+
+add_languages('cpp', 'objc', 'objcpp', native: false)
+
+objfw = dependency('objfw', version: '>= 1.4.0')
+gtk4 = dependency('gtk4')
+libadwaita = dependency('libadwaita-1', version: '>= 1.5')
+#libebook = dependency('libebook-1.2')
+
+peel = dependency('peel')
+
+peel_gen = find_program('peel-gen')
+peel_headers = custom_target('peel-codegen',
+  command: [
+    peel_gen,
+    '--recursive',
+    '--out-dir', '@OUTDIR@',
+    'Gtk', '4.0',
+    'Adw', '1',
+#    'EBook', '1.2'
+  ],
+  output: 'peel',
+)
+
+subdir('src')
+
+executable('contacts2phone',
+    sources,
+    peel_headers,
+    dependencies: [objfw, gtk4, libadwaita, peel]
+)
