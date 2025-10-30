@@ -13,11 +13,12 @@ peel_gen = find_program('peel-gen')
 peel_headers = custom_target('peel-codegen',
   command: [
     peel_gen,
+    '--api-tweaks', '/usr/local/share/peel/api-tweaks.txt',
     '--recursive',
     '--out-dir', '@OUTDIR@',
     'Gtk', '4.0',
     'Adw', '1',
-#    'EBook', '1.2'
+    'EBook', '1.2'
   ],
   output: 'peel',
 )
