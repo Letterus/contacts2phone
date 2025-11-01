@@ -1,6 +1,6 @@
-project('contacts2phone')
+project('contacts2phone', meson_version: '>=1.5.0')
 
-add_languages('cpp', 'objc', 'objcpp', native: false)
+add_languages('objc', 'objcpp', native: false)
 
 objfw = dependency('objfw')
 gtk4 = dependency('gtk4')
@@ -18,7 +18,7 @@ peel_headers = custom_target('peel-codegen',
     '--out-dir', '@OUTDIR@',
     'Gtk', '4.0',
     'Adw', '1',
-    'EBook', '1.2'
+    #'EBook', '1.2'
   ],
   output: 'peel',
 )
