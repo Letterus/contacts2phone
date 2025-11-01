@@ -1,6 +1,4 @@
-project('contacts2phone', meson_version: '>=1.5.0')
-
-add_languages('objc', 'objcpp', native: false)
+project('contacts2phone', ['objc', 'objcpp'], meson_version: '>=1.5.0')
 
 objfw = dependency('objfw')
 gtk4 = dependency('gtk4')
