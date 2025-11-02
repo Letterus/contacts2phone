@@ -1,4 +1,4 @@
-sources = files('C2PApplication.m')
+sources = files('C2PApplication.mm')
 subdir('Controller')
 subdir('Exception')
 subdir('Model')

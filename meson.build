@@ -16,7 +16,7 @@ peel_headers = custom_target('peel-codegen',
     '--out-dir', '@OUTDIR@',
     'Gtk', '4.0',
     'Adw', '1',
-    #'EBook', '1.2'
+    'EBook', '1.2'
   ],
   output: 'peel',
 )
