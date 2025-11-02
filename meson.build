@@ -21,10 +21,23 @@ peel_headers = custom_target('peel-codegen',
   output: 'peel',
 )
 
+glib_compile_resources = find_program('glib-compile-resources')
+gtk_resources = custom_target('compile-resources',
+  command: [
+    glib_compile_resources,
+    '--sourcedir', '../res/GTK/UI/',
+    '../res/GTK/UI/c2p.gresource.xml',
+    '--target=resources.m',
+    '--generate-source'
+  ],
+  output: 'resources.m'
+)
+
 subdir('src')
 
 executable('contacts2phone',
     sources,
     peel_headers,
+    gtk_resources,
     dependencies: [objfw, peel, gtk4, libadwaita, libebook]
 )
