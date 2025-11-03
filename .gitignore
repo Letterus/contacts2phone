@@ -171,6 +171,3 @@ contacts2phone
 Directory.xml
 *.sublime-workspace
 .kdev4
-res/GTK/UI/*.c
-src/View/GTK/*.c
-src/View/GTK/*.h
