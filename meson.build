@@ -28,7 +28,7 @@ resSource = 'resources.m'
 resInput = files(
   'res/GTK/UI/c2p.gresource.xml',
   'res/GTK/UI/AddressBookListRow.ui',
-  'res/GTK/UI/AddressBookListRow.ui'
+  'res/GTK/UI/MainView.ui'
   )
 
 glib_compile_resources = find_program('glib-compile-resources')
