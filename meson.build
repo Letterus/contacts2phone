@@ -21,16 +21,27 @@ peel_headers = custom_target('peel-codegen',
   output: 'peel',
 )
 
+# Need to add gresources manually, because the Gnome module isn't compatible
+# to objc(pp) projects.
+resDir = '../res'
+resSource = 'resources.m'
+resInput = files(
+  'res/GTK/UI/c2p.gresource.xml',
+  'res/GTK/UI/AddressBookListRow.ui',
+  'res/GTK/UI/AddressBookListRow.ui'
+  )
+
 glib_compile_resources = find_program('glib-compile-resources')
 gtk_resources = custom_target('compile-resources',
+  input: resInput,
+  output: resSource,
   command: [
     glib_compile_resources,
-    '--sourcedir', '../res/GTK/UI/',
-    '../res/GTK/UI/c2p.gresource.xml',
-    '--target=resources.m',
+    '--sourcedir', f'@resDir@/GTK/UI/',
+    f'@resDir@/GTK/UI/c2p.gresource.xml',
+    '--target=@OUTPUT@',
     '--generate-source'
-  ],
-  output: 'resources.m'
+  ]
 )
 
 subdir('src')
