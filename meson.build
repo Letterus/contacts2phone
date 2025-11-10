@@ -4,6 +4,7 @@ objfw = dependency('objfw')
 gtk4 = dependency('gtk4')
 libadwaita = dependency('libadwaita-1', version: '>= 1.5')
 libebook = dependency('libebook-1.2')
+libedataserver = dependency('libedataserver-1.2')
 
 peel = dependency('peel')
 
@@ -50,5 +51,5 @@ executable('contacts2phone',
     sources,
     peel_headers,
     gtk_resources,
-    dependencies: [objfw, peel, gtk4, libadwaita, libebook]
+    dependencies: [objfw, peel, gtk4, libadwaita, libebook, libedataserver]
 )
