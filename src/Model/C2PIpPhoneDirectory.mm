@@ -12,7 +12,6 @@
 #import "C2PIpPhoneDirectoryEntry.h"
 #include <peel/EBook/EBook.h>
 #include <peel/EBookContacts/EBookContacts.h>
-#include <peel/GLib/functions.h>
 
 using namespace peel;
 
