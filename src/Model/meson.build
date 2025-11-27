@@ -1,3 +1,3 @@
-sources += files('C2PIpPhoneDirectory.m',
+sources += files('C2PIpPhoneDirectory.mm',
         'C2PIpPhoneDirectoryEntry.m'
     )

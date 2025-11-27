@@ -8,7 +8,7 @@
  */
 
 #import "../../Model/C2PIpPhoneDirectory.h"
-#import "../../Service/C2PEvolutionDataService.h"
+#import "../../Service/EvolutionDataService.h"
 #import <ObjGTK4/ObjGTK4-Umbrella.h>
 
 OF_ASSUME_NONNULL_BEGIN
@@ -16,19 +16,19 @@ OF_ASSUME_NONNULL_BEGIN
 @interface C2PGTKAppController: OFObject
 {
 	OGTKApplication *_app;
-	C2PEvolutionDataService *_evolutionService;
+	C2P::EvolutionDataService *_evolutionService;
 	C2PIpPhoneDirectory *_phoneDirectory;
 	OGListStore *_addressBooksModel;
 	OGTKListBox *_addressBooksList;
 }
 
 @property (assign) OGTKApplication *app;
-@property (assign) C2PEvolutionDataService *evolutionService;
+@property (assign) C2P::EvolutionDataService *evolutionService;
 @property (assign) C2PIpPhoneDirectory *phoneDirectory;
 @property (assign) OGListStore *addressBooksModel;
 @property (assign) OGTKListBox *addressBooksList;
 
-- (instancetype)initWithEDS:(C2PEvolutionDataService *)evolutionService
+- (instancetype)initWithEDS:(C2P::EvolutionDataService *)evolutionService
              phoneDirectory:(C2PIpPhoneDirectory *)phoneDirectory;
 
 - (int)launch;

@@ -6,100 +6,59 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
+#include "EvolutionDataService.h"
+#include <clocale>
+#include <peel/GLib/functions.h>
 
-#import "C2PEvolutionDataService.h"
-#import "../Exception/C2PEDSException.h"
+using namespace peel;
+namespace C2P {
 
-@implementation C2PEvolutionDataService
-
-- (void)dealloc
+RefPtr<Gio::ListStore>
+EvolutionDataService::getAddressbookSources()
 {
-	[_registry release];
-	[_defaultAddressbookSource release];
+    setlocale(LC_ALL, "");
+    UniquePtr<GLib::Error> error;
 
-	[super dealloc];
+    auto registry = EDataServer::SourceRegistry::create_sync(/* cancellable */ nullptr, &error);
+    if (G_UNLIKELY(error)) {
+        GLib::printerr("Failed to create a source registry: %s\n", error->message);
+        // throw exception?
+    }
+
+    auto sources = registry->list_sources("Address Book");
+
+    RefPtr<Gio::ListStore> listStore = Gio::ListStore::create(Type::of<EDataServer::Source>());
+
+    GLib::List::foreach (sources, [listStore] (gpointer data)
+    {
+        auto source = reinterpret_cast<EDataServer::Source *> (data);
+        listStore->append(source);
+    });
+
+    GLib::List::free_full (std::move (sources).release_ref (), g_object_unref);
+    return listStore;
 }
 
-#pragma mark - Property getters
-
-- (OGESourceRegistry *)registry
+UniquePtr<GLib::SList>
+EvolutionDataService::retrieveContactsFromAddressbookSource(EDataServer::Source *addressbook)
 {
-	if (_registry != nil)
-		return _registry;
+    UniquePtr<GLib::SList> contacts;
+    UniquePtr<GLib::Error> error;
 
-	_registry = [self retrieveRegistry];
-	[_registry retain];
+    auto client = peel::EBook::BookClient::connect_sync (addressbook, /* timeout */ 1, /* cancellable */ nullptr, &error);
+    if (G_UNLIKELY (error))
+    {
+            GLib::printerr ("Failed to connect to EBook: %s\n", error->message);
+            // throw exception?
+    }
 
-	return _registry;
+    client->get_contacts_sync (/* sexp */ "", &contacts, /* cancellable */ nullptr, &error);
+    if (G_UNLIKELY (error))
+    {
+            GLib::printerr ("Failed to get contacts: %s\n", error->message);
+           // throw exception?
+    }
+
+    return contacts;
 }
-
-- (OGESource *)defaultAddressbookSource
-{
-	if (_defaultAddressbookSource != nil)
-		return _defaultAddressbookSource;
-
-	_defaultAddressbookSource = self.registry.refDefaultAddressBook;
-	[_defaultAddressbookSource retain];
-
-	return _defaultAddressbookSource;
-}
-
-- (OGListStore *)addressbookSources
-{
-	OGListStore *addressBookListStore = [OGListStore listStoreWithItemType:e_source_get_type()];
-
-	GList *sourceList = [self.registry listSourcesWithExtensionName:@"Address Book"];
-
-	for (GList *element = sourceList; element != NULL; element = element->next) {
-		ESource *source = element->data;
-		// OFLog(@"Addressbook name %s, UUID: %s",
-		//     e_source_get_display_name(source),
-		//     e_source_get_uid(source));
-		[addressBookListStore appendWithItem:source];
-		g_object_unref(source);
-	}
-	g_list_free(sourceList);
-
-	return addressBookListStore;
-}
-
-#pragma mark - Private methods - fetching data from EDS
-
-- (OGESourceRegistry *)retrieveRegistry
-{
-	OGESourceRegistry *registry;
-
-	@try {
-		registry = [OGESourceRegistry sourceRegistrySyncWithCancellable:nil];
-	} @catch (id e) {
-		[registry release];
-		@throw e;
-	}
-
-	return [registry autorelease];
-}
-
-- (GSList *)retrieveContactsFromAddressbookSource:(OGESource *)addressbook
-{
-	OGEBookClient *client;
-
-	client = (OGEBookClient *)[OGEBookClient connectSyncWithSource:addressbook
-	                                       waitForConnectedSeconds:1
-	                                                   cancellable:nil];
-
-	GSList *contactsList = NULL;
-	OFString *sexp = @"";
-
-	[client contactsSyncWithSexp:sexp outContacts:&contactsList cancellable:nil];
-
-	if (contactsList == NULL)
-		@throw [C2PDescriptionException
-		    exceptionWithDescription:[OFString
-		                                 stringWithFormat:@"Could not get any contacts "
-		                                                  @"from addressbook: %@",
-		                                 self.defaultAddressbookSource.displayName]];
-
-	return contactsList;
-}
-
-@end
+}  // namespace C2P

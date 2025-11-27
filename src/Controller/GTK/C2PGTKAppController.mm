@@ -38,7 +38,7 @@ createAddressbookRow(GObject *item, gpointer user_data)
 	[super dealloc];
 }
 
-- (instancetype)initWithEDS:(C2PEvolutionDataService *)evolutionService
+- (instancetype)initWithEDS:(C2P::EvolutionDataService *)evolutionService
              phoneDirectory:(C2PIpPhoneDirectory *)phoneDirectory
 {
 	self = [super init];

@@ -1,1 +1,1 @@
-sources += files('GTK/C2PGTKAppController.mm')
+#sources += files('GTK/C2PGTKAppController.mm')

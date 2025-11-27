@@ -10,8 +10,11 @@
 #import "C2PIpPhoneDirectory.h"
 #import "../Exception/C2PEDSException.h"
 #import "C2PIpPhoneDirectoryEntry.h"
+#include <peel/EBook/EBook.h>
+#include <peel/EBookContacts/EBookContacts.h>
+#include <peel/GLib/functions.h>
 
-const OFStringEncoding _encoding = OFStringEncodingUTF8;
+using namespace peel;
 
 @implementation C2PIpPhoneDirectory
 
@@ -38,31 +41,29 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 #pragma mark - Import methods
 
-- (void)importFromEvolutionBook:(GSList *)evolutionContacts
+- (void)importFromEvolutionBook:(UniquePtr<GLib::SList>)evolutionContacts
 {
-	for (GSList *element = evolutionContacts; element != NULL;
-	     element = element->next) {
+	GLib::SList::foreach (evolutionContacts, [dir = self] (gpointer data)
+	{
+		auto econtact = reinterpret_cast<EBookContacts::Contact *> (data);
 		@autoreleasepool {
-			EContact *gecontact = element->data;
-			OGEContact *econtact =
-			    [OGEContact withGObject:gecontact];
 			bool gotPhoneNumber = false;
 
 			C2PIpPhoneDirectoryEntry *newEntry =
 			    [[C2PIpPhoneDirectoryEntry alloc] init];
 
 			@try {
-				[self addNameToEntry:newEntry
+				[dir addNameToEntry:newEntry
 				    fromEvolutionContact:econtact];
-				if ([self addOfficeToEntry:newEntry
+				if ([dir addOfficeToEntry:newEntry
 				        fromEvolutionContact:econtact])
 					gotPhoneNumber = true;
 
-				if ([self addMobileToEntry:newEntry
+				if ([dir addMobileToEntry:newEntry
 				        fromEvolutionContact:econtact])
 					gotPhoneNumber = true;
 
-				if ([self addTelephoneToEntry:newEntry
+				if ([dir addTelephoneToEntry:newEntry
 				         fromEvolutionContact:econtact])
 					gotPhoneNumber = true;
 
@@ -73,40 +74,39 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 
 			} @catch (C2PEDSException *e) {
 				[newEntry release];
-				continue;
+				return;
 			}
 
-			[self.entries addObject:newEntry];
+			[dir.entries addObject:newEntry];
 
 //			OFLog(@"Added to Directory Entry: %@",
 //			    [newEntry description]);
 
 			[newEntry release];
 		}
-	}
+	});
+
+	GLib::SList::free_full (std::move (evolutionContacts).release_ref (), g_object_unref);
 }
 
-#pragma mark - Private import helper methods
-
-- (OFString *)stringFromPointer:(gpointer)gpointer
+- (OFString *)stringFromPeel:(peel::String)peelString
 {
-	OFString *returnValue = ((gpointer != NULL)
-	        ? [OFString stringWithUTF8StringNoCopy:(char *_Nonnull)gpointer
-	                                  freeWhenDone:false]
-	        : nil);
+	const char* cString = peelString.c_str();
+	if(cString == NULL)
+		return nil;
 
-	return returnValue;
+	return [OFString stringWithUTF8String:(char * _Nonnull)cString];
 }
 
 - (void)addNameToEntry:(C2PIpPhoneDirectoryEntry *)entry
-    fromEvolutionContact:(OGEContact *)econtact
+    fromEvolutionContact:(EBookContacts::Contact *)econtact
 {
 	OFString *familyname =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_FAMILY_NAME]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_family_name ())];
 	OFString *givenname =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_GIVEN_NAME]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_given_name ())];
 	OFString *fullname =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_FULL_NAME]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_full_name ())];
 
 	if ([self isValidNameField:familyname]) {
 		if ([self isValidNameField:givenname])
@@ -126,16 +126,16 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 }
 
 - (bool)addTelephoneToEntry:(C2PIpPhoneDirectoryEntry *)entry
-       fromEvolutionContact:(OGEContact *)econtact
+       fromEvolutionContact:(EBookContacts::Contact *)econtact
 {
 	OFString *primary =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_PRIMARY]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_primary_phone ())];
 	OFString *home =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_HOME]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_home_phone ())];
 	OFString *home2 =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_HOME_2]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_home_phone_2 ())];
 	OFString *other =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_OTHER]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_other_phone ())];
 
 	if ([self isValidPhoneField:primary]) {
 		primary = [self cleanPhoneNumber:primary];
@@ -163,14 +163,14 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 }
 
 - (bool)addOfficeToEntry:(C2PIpPhoneDirectoryEntry *)entry
-    fromEvolutionContact:(OGEContact *)econtact
+    fromEvolutionContact:(EBookContacts::Contact *)econtact
 {
 	OFString *business =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_BUSINESS]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_business_phone ())];
 	OFString *business2 =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_BUSINESS_2]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_business_phone_2 ())];
 	OFString *company =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_COMPANY]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_company_phone ())];
 
 	if ([self isValidPhoneField:business]) {
 		entry.office = [self cleanPhoneNumber:business];
@@ -189,14 +189,14 @@ const OFStringEncoding _encoding = OFStringEncodingUTF8;
 }
 
 - (bool)addMobileToEntry:(C2PIpPhoneDirectoryEntry *)entry
-    fromEvolutionContact:(OGEContact *)econtact
+    fromEvolutionContact:(EBookContacts::Contact *)econtact
 {
 	OFString *mobile =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_MOBILE]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_mobile_phone ())];
 	OFString *pager =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_PAGER]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_pager ())];
 	OFString *car =
-	    [self stringFromPointer:[econtact getWithFieldId:E_CONTACT_PHONE_CAR]];
+	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_car_phone ())];
 
 	if ([self isValidPhoneField:mobile]) {
 		entry.mobile = [self cleanPhoneNumber:mobile];
