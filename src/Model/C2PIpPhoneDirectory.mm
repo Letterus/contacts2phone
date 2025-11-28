@@ -101,11 +101,11 @@ using namespace peel;
     fromEvolutionContact:(EBookContacts::Contact *)econtact
 {
 	OFString *familyname =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_family_name ())];
+	    [self cleanName:[self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_family_name ())]];
 	OFString *givenname =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_given_name ())];
+	    [self cleanName:[self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_given_name ())]];
 	OFString *fullname =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_full_name ())];
+	    [self cleanName:[self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_full_name ())]];
 
 	if ([self isValidNameField:familyname]) {
 		if ([self isValidNameField:givenname])
@@ -244,6 +244,28 @@ using namespace peel;
 	[cleanPhoneNumber autorelease];
 
 	return [cleanPhoneNumber stringByDeletingEnclosingWhitespaces];
+}
+
+- (OFString *)cleanName:(OFString *)name
+{
+	OFString *cleanName = [name stringByReplacingOccurrencesOfString:@"'"
+														  withString:@""];
+
+	@autoreleasepool {
+		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"\""
+														 withString:@""];
+
+		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"‘"
+														 withString:@""];
+
+		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"&"
+														 withString:@"+"];
+
+		[cleanName retain];
+	}
+	[cleanName autorelease];
+
+	return [cleanName stringByDeletingEnclosingWhitespaces];
 }
 
 #pragma mark - Serializers
