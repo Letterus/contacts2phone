@@ -7,7 +7,6 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 #include "EvolutionDataService.h"
-#include <clocale>
 #include <peel/GLib/functions.h>
 
 using namespace peel;
@@ -16,7 +15,6 @@ namespace C2P {
 RefPtr<Gio::ListStore>
 EvolutionDataService::getAddressbookSources()
 {
-    setlocale(LC_ALL, "");
     UniquePtr<GLib::Error> error;
 
     auto registry = EDataServer::SourceRegistry::create_sync(/* cancellable */ nullptr, &error);
