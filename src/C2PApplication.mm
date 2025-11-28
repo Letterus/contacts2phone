@@ -30,9 +30,13 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	//    phoneDirectory:phoneDirectory] autorelease];
 
 	RefPtr<EDataServer::Source> myAddressBook = nullptr;
-	for(int i = 0; RefPtr<EDataServer::Source> addressBook = reinterpret_cast<EDataServer::Source *>(addressbookListStore->get_item(i)); i++) {
-		if(strcmp(addressBook->get_display_name(), "Adressbuch") == 0) {
-			myAddressBook = addressBook;
+
+	unsigned n_items = addressbookListStore->get_n_items();
+	for(unsigned index = 0; index < n_items; index++) {
+		auto addressbook = addressbookListStore->get_object(index).cast<EDataServer::Source>();
+
+		if(strcmp(addressbook->get_display_name(), "Adressbuch") == 0) {
+			myAddressBook = addressbook;
 			break;
 		}
 	}
@@ -40,13 +44,12 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	if(myAddressBook == nullptr)
 		[OFApplication terminateWithStatus:EXIT_FAILURE];
 
-	// General model
 	C2PIpPhoneDirectory *phoneDirectory =
 	    [[C2PIpPhoneDirectory alloc] init];
 
 	UniquePtr<GLib::SList> contacts = evolutionService->retrieveContactsFromAddressbookSource(myAddressBook);
-
 	[phoneDirectory importFromEvolutionBook:std::move(contacts)];
+
 	[OFStdOut writeString:phoneDirectory.stringBySerializing];
 
 	[phoneDirectory release];
