@@ -171,3 +171,4 @@ contacts2phone
 Directory.xml
 *.sublime-workspace
 .kdev4
+.cache
