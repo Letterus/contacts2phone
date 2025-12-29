@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-//#import "Controller/GTK/C2PGTKAppController.h"
+// #import "Controller/GTK/C2PGTKAppController.h"
 #import "Model/C2PIpPhoneDirectory.h"
 #import "Service/EvolutionDataService.h"
 #import <ObjFW/ObjFW.h>
@@ -25,29 +25,30 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	auto evolutionService = new C2P::EvolutionDataService();
 	RefPtr<Gio::ListStore> addressbookListStore = evolutionService->getAddressbookSources();
 
-	//C2PGTKAppController *gtkAppController = [[[C2PGTKAppController alloc]
-	//       initWithEDS:evolutionService
-	//    phoneDirectory:phoneDirectory] autorelease];
+	// C2PGTKAppController *gtkAppController = [[[C2PGTKAppController alloc]
+	//        initWithEDS:evolutionService
+	//     phoneDirectory:phoneDirectory] autorelease];
 
 	RefPtr<EDataServer::Source> myAddressBook = nullptr;
 
 	unsigned n_items = addressbookListStore->get_n_items();
-	for(unsigned index = 0; index < n_items; index++) {
-		auto addressbook = addressbookListStore->get_object(index).cast<EDataServer::Source>();
+	for (unsigned index = 0; index < n_items; index++) {
+		auto addressbook =
+		    addressbookListStore->get_object(index).cast<EDataServer::Source>();
 
-		if(strcmp(addressbook->get_display_name(), "Adressbuch") == 0) {
+		if (strcmp(addressbook->get_display_name(), "Adressbuch") == 0) {
 			myAddressBook = addressbook;
 			break;
 		}
 	}
 
-	if(myAddressBook == nullptr)
+	if (myAddressBook == nullptr)
 		[OFApplication terminateWithStatus:EXIT_FAILURE];
 
-	C2PIpPhoneDirectory *phoneDirectory =
-	    [[C2PIpPhoneDirectory alloc] init];
+	C2PIpPhoneDirectory *phoneDirectory = [[C2PIpPhoneDirectory alloc] init];
 
-	UniquePtr<GLib::SList> contacts = evolutionService->retrieveContactsFromAddressbookSource(myAddressBook);
+	UniquePtr<GLib::SList> contacts =
+	    evolutionService->retrieveContactsFromAddressbookSource(myAddressBook);
 	[phoneDirectory importFromEvolutionBook:std::move(contacts)];
 
 	[OFStdOut writeString:phoneDirectory.stringBySerializing];
