@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-  <gresource prefix="/de/devbeejohn/c2p/">
-    <file>MainView.ui</file>
-    <file>AddressBookListRow.ui</file>
-  </gresource>
-</gresources>
