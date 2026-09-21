@@ -1,6 +1,4 @@
 sources = files('C2PApplication.mm')
-subdir('Controller')
 subdir('Exception')
 subdir('Model')
 subdir('Service')
-subdir('View')
