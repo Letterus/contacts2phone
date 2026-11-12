@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 #import <ObjFW/ObjFW.h>
-#include <peel/GLib/functions.h>
+#include <glib.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +25,7 @@ OF_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) OFXMLElement *XMLElementBySerializing;
 
 - (OFString *)stringBySerializing;
-- (void)importFromEvolutionBook:(peel::UniquePtr<peel::GLib::SList>)evolutionContacts;
+- (void)importFromEvolutionBook:(GSList *)evolutionContacts;
 
 @end
 

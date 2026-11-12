@@ -10,10 +10,8 @@
 #import "C2PIpPhoneDirectory.h"
 #import "../Exception/C2PEDSException.h"
 #import "C2PIpPhoneDirectoryEntry.h"
-#include <peel/EBook/EBook.h>
-#include <peel/EBookContacts/EBookContacts.h>
-
-using namespace peel;
+#include <libebook-contacts/libebook-contacts.h>
+#include <libebook/libebook.h>
 
 @implementation C2PIpPhoneDirectory
 
@@ -40,11 +38,11 @@ using namespace peel;
 
 #pragma mark - Import methods
 
-- (void)importFromEvolutionBook:(UniquePtr<GLib::SList>)evolutionContacts
+- (void)importFromEvolutionBook:(GSList *)evolutionContacts
 {
-	GLib::SList::foreach (evolutionContacts, [dir = self] (gpointer data)
-	{
-		auto econtact = reinterpret_cast<EBookContacts::Contact *> (data);
+	GSList *entry;
+	for (entry = evolutionContacts; entry; entry = entry->next) {
+		EContact *econtact = E_CONTACT(entry->data);
 		@autoreleasepool {
 			bool gotPhoneNumber = false;
 
@@ -52,65 +50,55 @@ using namespace peel;
 			    [[C2PIpPhoneDirectoryEntry alloc] init];
 
 			@try {
-				[dir addNameToEntry:newEntry
-				    fromEvolutionContact:econtact];
-				if ([dir addOfficeToEntry:newEntry
-				        fromEvolutionContact:econtact])
+				[self addNameToEntry:newEntry fromEvolutionContact:econtact];
+				if ([self addOfficeToEntry:newEntry fromEvolutionContact:econtact])
 					gotPhoneNumber = true;
 
-				if ([dir addMobileToEntry:newEntry
-				        fromEvolutionContact:econtact])
+				if ([self addMobileToEntry:newEntry fromEvolutionContact:econtact])
 					gotPhoneNumber = true;
 
-				if ([dir addTelephoneToEntry:newEntry
+				if ([self addTelephoneToEntry:newEntry
 				         fromEvolutionContact:econtact])
 					gotPhoneNumber = true;
 
 				if (!gotPhoneNumber)
 					@throw [C2PEDSException
-					    exceptionWithDescription:
-					        @"Found no phone number."];
+					    exceptionWithDescription:@"Found no phone number."];
 
 			} @catch (C2PEDSException *e) {
 				[newEntry release];
-				return;
+				continue;
 			}
 
-			[dir.entries addObject:newEntry];
+			[self.entries addObject:newEntry];
 
-//			OFLog(@"Added to Directory Entry: %@",
-//			    [newEntry description]);
+			//OFLog(@"Added to Directory Entry: %@", [newEntry description]);
 
 			[newEntry release];
 		}
-	});
-
-	GLib::SList::free_full (std::move (evolutionContacts).release_ref (), g_object_unref);
+	}
 }
 
-- (OFString *)stringFromPeel:(peel::String)peelString
+- (OFString *)stringFromGlib:(const char *)cString
 {
-	const char* cString = peelString.c_str();
-	if(cString == NULL)
+	if (cString == NULL)
 		return nil;
 
-	return [OFString stringWithUTF8String:(char * _Nonnull)cString];
+	return [OFString stringWithUTF8String:(char *_Nonnull)cString];
 }
 
-- (void)addNameToEntry:(C2PIpPhoneDirectoryEntry *)entry
-    fromEvolutionContact:(EBookContacts::Contact *)econtact
+- (void)addNameToEntry:(C2PIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
 {
 	OFString *familyname =
-	    [self cleanName:[self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_family_name ())]];
+	    [self cleanName:[self stringFromGlib:e_contact_get(econtact, E_CONTACT_FAMILY_NAME)]];
 	OFString *givenname =
-	    [self cleanName:[self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_given_name ())]];
+	    [self cleanName:[self stringFromGlib:e_contact_get(econtact, E_CONTACT_GIVEN_NAME)]];
 	OFString *fullname =
-	    [self cleanName:[self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_full_name ())]];
+	    [self cleanName:[self stringFromGlib:e_contact_get(econtact, E_CONTACT_FULL_NAME)]];
 
 	if ([self isValidNameField:familyname]) {
 		if ([self isValidNameField:givenname])
-			entry.name = [OFString
-			    stringWithFormat:@"%@, %@", familyname, givenname];
+			entry.name = [OFString stringWithFormat:@"%@, %@", familyname, givenname];
 		else
 			entry.name = familyname;
 
@@ -119,27 +107,21 @@ using namespace peel;
 	} else if ([self isValidNameField:fullname]) {
 		entry.name = fullname;
 	} else {
-		@throw [C2PEDSException
-		    exceptionWithDescription:@"Name fields are empty."];
+		@throw [C2PEDSException exceptionWithDescription:@"Name fields are empty."];
 	}
 }
 
 - (bool)addTelephoneToEntry:(C2PIpPhoneDirectoryEntry *)entry
-       fromEvolutionContact:(EBookContacts::Contact *)econtact
+       fromEvolutionContact:(EContact *)econtact
 {
-	OFString *primary =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_primary_phone ())];
-	OFString *home =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_home_phone ())];
-	OFString *home2 =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_home_phone_2 ())];
-	OFString *other =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_other_phone ())];
+	OFString *primary = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_PRIMARY)];
+	OFString *home = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_HOME)];
+	OFString *home2 = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_HOME_2)];
+	OFString *other = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_OTHER)];
 
 	if ([self isValidPhoneField:primary]) {
 		primary = [self cleanPhoneNumber:primary];
-		if (![primary isEqual:entry.office] &&
-		    ![primary isEqual:entry.mobile]) {
+		if (![primary isEqual:entry.office] && ![primary isEqual:entry.mobile]) {
 			entry.telephone = primary;
 			return true;
 		}
@@ -161,15 +143,13 @@ using namespace peel;
 	return false;
 }
 
-- (bool)addOfficeToEntry:(C2PIpPhoneDirectoryEntry *)entry
-    fromEvolutionContact:(EBookContacts::Contact *)econtact
+- (bool)addOfficeToEntry:(C2PIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
 {
 	OFString *business =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_business_phone ())];
+	    [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_BUSINESS)];
 	OFString *business2 =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_business_phone_2 ())];
-	OFString *company =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_company_phone ())];
+	    [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_BUSINESS_2)];
+	OFString *company = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_COMPANY)];
 
 	if ([self isValidPhoneField:business]) {
 		entry.office = [self cleanPhoneNumber:business];
@@ -187,15 +167,11 @@ using namespace peel;
 	return false;
 }
 
-- (bool)addMobileToEntry:(C2PIpPhoneDirectoryEntry *)entry
-    fromEvolutionContact:(EBookContacts::Contact *)econtact
+- (bool)addMobileToEntry:(C2PIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
 {
-	OFString *mobile =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_mobile_phone ())];
-	OFString *pager =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_pager ())];
-	OFString *car =
-	    [self stringFromPeel:econtact->get_property (EBookContacts::Contact::prop_car_phone ())];
+	OFString *mobile = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_MOBILE)];
+	OFString *pager = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_PAGER)];
+	OFString *car = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_CAR)];
 
 	if ([self isValidPhoneField:mobile]) {
 		entry.mobile = [self cleanPhoneNumber:mobile];
@@ -223,8 +199,7 @@ using namespace peel;
 
 - (bool)isValidPhoneField:(OFString *)phoneField
 {
-	if (phoneField != nil && ![phoneField isEqual:@""] &&
-	    [phoneField length] > 3)
+	if (phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3)
 		return true;
 
 	return false;
@@ -232,13 +207,12 @@ using namespace peel;
 
 - (OFString *)cleanPhoneNumber:(OFString *)phoneNumber
 {
-	OFString *cleanPhoneNumber =
-	    [phoneNumber stringByReplacingOccurrencesOfString:@"(0)"
-	                                           withString:@""];
+	OFString *cleanPhoneNumber = [phoneNumber stringByReplacingOccurrencesOfString:@"(0)"
+	                                                                    withString:@""];
 	@autoreleasepool {
-		cleanPhoneNumber = [[cleanPhoneNumber
-		    componentsSeparatedByCharactersInSet:
-		        _cleanNumberCharsToKeep] componentsJoinedByString:@""];
+		cleanPhoneNumber =
+		    [[cleanPhoneNumber componentsSeparatedByCharactersInSet:_cleanNumberCharsToKeep]
+		        componentsJoinedByString:@""];
 		[cleanPhoneNumber retain];
 	}
 	[cleanPhoneNumber autorelease];
@@ -248,18 +222,14 @@ using namespace peel;
 
 - (OFString *)cleanName:(OFString *)name
 {
-	OFString *cleanName = [name stringByReplacingOccurrencesOfString:@"'"
-														  withString:@""];
+	OFString *cleanName = [name stringByReplacingOccurrencesOfString:@"'" withString:@""];
 
 	@autoreleasepool {
-		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"\""
-														 withString:@""];
+		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"\"" withString:@""];
 
-		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"‘"
-														 withString:@""];
+		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"‘" withString:@""];
 
-		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"&"
-														 withString:@"+"];
+		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"&" withString:@"+"];
 
 		[cleanName retain];
 	}
@@ -293,8 +263,7 @@ using namespace peel;
 {
 	void *pool = objc_autoreleasePoolPush();
 
-	OFXMLElement *element =
-	    [OFXMLElement elementWithName:@"IPPhoneDirectory"];
+	OFXMLElement *element = [OFXMLElement elementWithName:@"IPPhoneDirectory"];
 
 	for (C2PIpPhoneDirectoryEntry *entry in self.entries) {
 		[element addChild:entry.XMLElementBySerializing];

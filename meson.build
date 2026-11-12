@@ -4,6 +4,8 @@ objfw = dependency('objfw')
 libebook = dependency('libebook-1.2')
 libedataserver = dependency('libedataserver-1.2')
 
+subdir('src')
+
 executable('contacts2phone',
     sources,
     dependencies: [objfw, libebook, libedataserver]

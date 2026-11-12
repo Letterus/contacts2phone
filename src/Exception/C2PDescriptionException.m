@@ -37,8 +37,7 @@
 {
 	self = [super init];
 
-	_description = [OFString stringWithCString:cdescription
-	                                  encoding:OFStringEncodingUTF8];
+	_description = [OFString stringWithUTF8String:cdescription];
 
 	return self;
 }
@@ -51,8 +50,7 @@
 
 - (void)setDescriptionCString:(char *)cdescription
 {
-	_description = [OFString stringWithCString:cdescription
-	                                  encoding:OFStringEncodingUTF8];
+	_description = [OFString stringWithUTF8String:cdescription];
 }
 
 - (OFString *)description
