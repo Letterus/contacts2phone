@@ -22,9 +22,6 @@
 	self = [super init];
 
 	_entries = [[OFMutableArray alloc] init];
-	_allowedCharsInPhoneNumber =
-	    [OFCharacterSet characterSetWithCharactersInString:@"+0123456789 "];
-	_cleanNumberCharsToKeep = [_allowedCharsInPhoneNumber invertedSet];
 
 	return self;
 }
@@ -44,27 +41,32 @@
 	for (entry = evolutionContacts; entry; entry = entry->next) {
 		EContact *econtact = E_CONTACT(entry->data);
 		@autoreleasepool {
-			bool gotPhoneNumber = false;
-
 			C2PIpPhoneDirectoryEntry *newEntry =
 			    [[C2PIpPhoneDirectoryEntry alloc] init];
 
 			@try {
-				[self addNameToEntry:newEntry fromEvolutionContact:econtact];
-				if ([self addOfficeToEntry:newEntry fromEvolutionContact:econtact])
-					gotPhoneNumber = true;
+				[newEntry addNameFromEvolutionContact:econtact];
 
-				if ([self addMobileToEntry:newEntry fromEvolutionContact:econtact])
-					gotPhoneNumber = true;
+				OFDictionary *keyValueMapping = @{
+					@"telephone" : @[
+						@(E_CONTACT_PHONE_PRIMARY), @(E_CONTACT_PHONE_HOME),
+						@(E_CONTACT_PHONE_HOME_2), @(E_CONTACT_PHONE_OTHER)
+					],
+					@"office" : @[
+						@(E_CONTACT_PHONE_BUSINESS),
+						@(E_CONTACT_PHONE_BUSINESS_2),
+						@(E_CONTACT_PHONE_COMPANY)
+					],
+					@"mobile" : @[
+						@(E_CONTACT_PHONE_MOBILE), @(E_CONTACT_PHONE_PAGER),
+						@(E_CONTACT_PHONE_CAR)
+					]
+				};
 
-				if ([self addTelephoneToEntry:newEntry
-				         fromEvolutionContact:econtact])
-					gotPhoneNumber = true;
+				[newEntry setTelephoneValuesForKeysWithDictionary:keyValueMapping
+				                             fromEvolutionContact:econtact];
 
-				if (!gotPhoneNumber)
-					@throw [C2PEDSException
-					    exceptionWithDescription:@"Found no phone number."];
-
+			// TODO: Make new C2PInvalidEntryException
 			} @catch (C2PEDSException *e) {
 				[newEntry release];
 				continue;
@@ -72,170 +74,11 @@
 
 			[self.entries addObject:newEntry];
 
-			//OFLog(@"Added to Directory Entry: %@", [newEntry description]);
+			// OFLog(@"Added to Directory Entry: %@", [newEntry description]);
 
 			[newEntry release];
 		}
 	}
-}
-
-- (OFString *)stringFromGlib:(const char *)cString
-{
-	if (cString == NULL)
-		return nil;
-
-	return [OFString stringWithUTF8String:(char *_Nonnull)cString];
-}
-
-- (void)addNameToEntry:(C2PIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
-{
-	OFString *familyname =
-	    [self cleanName:[self stringFromGlib:e_contact_get(econtact, E_CONTACT_FAMILY_NAME)]];
-	OFString *givenname =
-	    [self cleanName:[self stringFromGlib:e_contact_get(econtact, E_CONTACT_GIVEN_NAME)]];
-	OFString *fullname =
-	    [self cleanName:[self stringFromGlib:e_contact_get(econtact, E_CONTACT_FULL_NAME)]];
-
-	if ([self isValidNameField:familyname]) {
-		if ([self isValidNameField:givenname])
-			entry.name = [OFString stringWithFormat:@"%@, %@", familyname, givenname];
-		else
-			entry.name = familyname;
-
-	} else if ([self isValidNameField:givenname]) {
-		entry.name = givenname;
-	} else if ([self isValidNameField:fullname]) {
-		entry.name = fullname;
-	} else {
-		@throw [C2PEDSException exceptionWithDescription:@"Name fields are empty."];
-	}
-}
-
-- (bool)addTelephoneToEntry:(C2PIpPhoneDirectoryEntry *)entry
-       fromEvolutionContact:(EContact *)econtact
-{
-	OFString *primary = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_PRIMARY)];
-	OFString *home = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_HOME)];
-	OFString *home2 = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_HOME_2)];
-	OFString *other = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_OTHER)];
-
-	if ([self isValidPhoneField:primary]) {
-		primary = [self cleanPhoneNumber:primary];
-		if (![primary isEqual:entry.office] && ![primary isEqual:entry.mobile]) {
-			entry.telephone = primary;
-			return true;
-		}
-	}
-
-	if ([self isValidPhoneField:home]) {
-		entry.telephone = [self cleanPhoneNumber:home];
-		return true;
-
-	} else if ([self isValidPhoneField:home2]) {
-		entry.telephone = [self cleanPhoneNumber:home2];
-		return true;
-
-	} else if ([self isValidPhoneField:other]) {
-		entry.telephone = [self cleanPhoneNumber:other];
-		return true;
-	}
-
-	return false;
-}
-
-- (bool)addOfficeToEntry:(C2PIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
-{
-	OFString *business =
-	    [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_BUSINESS)];
-	OFString *business2 =
-	    [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_BUSINESS_2)];
-	OFString *company = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_COMPANY)];
-
-	if ([self isValidPhoneField:business]) {
-		entry.office = [self cleanPhoneNumber:business];
-		return true;
-
-	} else if ([self isValidPhoneField:business2]) {
-		entry.office = [self cleanPhoneNumber:business2];
-		return true;
-
-	} else if ([self isValidPhoneField:company]) {
-		entry.office = [self cleanPhoneNumber:company];
-		return true;
-	}
-
-	return false;
-}
-
-- (bool)addMobileToEntry:(C2PIpPhoneDirectoryEntry *)entry fromEvolutionContact:(EContact *)econtact
-{
-	OFString *mobile = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_MOBILE)];
-	OFString *pager = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_PAGER)];
-	OFString *car = [self stringFromGlib:e_contact_get(econtact, E_CONTACT_PHONE_CAR)];
-
-	if ([self isValidPhoneField:mobile]) {
-		entry.mobile = [self cleanPhoneNumber:mobile];
-		return true;
-
-	} else if ([self isValidPhoneField:pager]) {
-		entry.mobile = [self cleanPhoneNumber:pager];
-		return true;
-
-	} else if ([self isValidPhoneField:car]) {
-		entry.mobile = [self cleanPhoneNumber:car];
-		return true;
-	}
-
-	return false;
-}
-
-- (bool)isValidNameField:(OFString *)nameField
-{
-	if (nameField != nil && [nameField length] != 0)
-		return true;
-
-	return false;
-}
-
-- (bool)isValidPhoneField:(OFString *)phoneField
-{
-	if (phoneField != nil && ![phoneField isEqual:@""] && [phoneField length] > 3)
-		return true;
-
-	return false;
-}
-
-- (OFString *)cleanPhoneNumber:(OFString *)phoneNumber
-{
-	OFString *cleanPhoneNumber = [phoneNumber stringByReplacingOccurrencesOfString:@"(0)"
-	                                                                    withString:@""];
-	@autoreleasepool {
-		cleanPhoneNumber =
-		    [[cleanPhoneNumber componentsSeparatedByCharactersInSet:_cleanNumberCharsToKeep]
-		        componentsJoinedByString:@""];
-		[cleanPhoneNumber retain];
-	}
-	[cleanPhoneNumber autorelease];
-
-	return [cleanPhoneNumber stringByDeletingEnclosingWhitespaces];
-}
-
-- (OFString *)cleanName:(OFString *)name
-{
-	OFString *cleanName = [name stringByReplacingOccurrencesOfString:@"'" withString:@""];
-
-	@autoreleasepool {
-		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-
-		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"‘" withString:@""];
-
-		cleanName = [cleanName stringByReplacingOccurrencesOfString:@"&" withString:@"+"];
-
-		[cleanName retain];
-	}
-	[cleanName autorelease];
-
-	return [cleanName stringByDeletingEnclosingWhitespaces];
 }
 
 #pragma mark - Serializers

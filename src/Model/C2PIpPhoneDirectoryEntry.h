@@ -8,10 +8,15 @@
  */
 
 #import <ObjFW/ObjFW.h>
+#include <libebook-contacts/libebook-contacts.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
 @interface C2PIpPhoneDirectoryEntry: OFObject
+{
+	OFCharacterSet *_allowedCharsInPhoneNumber;
+	OFCharacterSet *_cleanNumberCharsToKeep;
+}
 
 @property (retain, nonatomic) OFString *name;
 @property (retain, nonatomic) OFString *telephone;
@@ -23,6 +28,9 @@ OF_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, nonatomic) OFXMLElement *XMLElementBySerializing;
 
+- (instancetype)addNameFromEvolutionContact:(EContact *)econtact;
+- (instancetype)setTelephoneValuesForKeysWithDictionary:(OFDictionary *)keyValueMapping
+                                   fromEvolutionContact:(EContact *)econtact;
 - (OFString *)description;
 
 @end
