@@ -65,12 +65,12 @@
 {
 	bool gotTelephone = false;
 
-	for (OFString *ownProperty in keyValueMapping) {
-		OFArray *eContactProperties = [keyValueMapping objectForKey:ownProperty];
+	for (OFString *key in keyValueMapping) {
+		OFArray *eContactProperties = [keyValueMapping objectForKey:key];
 		for (OFNumber *eContactProperty in eContactProperties) {
-			if ([self addTelephoneProperty:eContactProperty
-			                          from:econtact
-			                         toKey:ownProperty])
+			if ([self setTelephonePropertyValue:eContactProperty
+			               fromEvolutionContact:econtact
+			                              toKey:key])
 				gotTelephone = true;
 		}
 	}
@@ -81,9 +81,9 @@
 	return self;
 }
 
-- (bool)addTelephoneProperty:(OFNumber *)telephoneProperty
-                        from:(EContact *)econtact
-                       toKey:(OFString *)key
+- (bool)setTelephonePropertyValue:(OFNumber *)telephoneProperty
+             fromEvolutionContact:(EContact *)econtact
+                            toKey:(OFString *)key
 {
 	OFString *telephoneNumber =
 	    [self stringFromGlib:e_contact_get(econtact, [telephoneProperty intValue])];
