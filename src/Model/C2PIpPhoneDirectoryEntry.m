@@ -91,18 +91,15 @@
 	if ([self isValidPhoneField:telephoneNumber]) {
 		telephoneNumber = [self cleanPhoneNumber:telephoneNumber];
 
-		if ([telephoneNumber length]) {
-
-			// In case we already got that telephone number as main number: Don't set it
-			// again
-			if ([key isEqual:@"office"] || [key isEqual:@"mobile"]) {
-				if ([telephoneNumber isEqual:self.telephone])
-					return true;
-			}
-
-			[self setValue:telephoneNumber forKey:key];
-			return true;
+		// In case we already got that telephone number as main number: Don't set it
+		// again
+		if ([key isEqual:@"office"] || [key isEqual:@"mobile"]) {
+			if ([telephoneNumber isEqual:self.telephone])
+				return true;
 		}
+
+		[self setValue:telephoneNumber forKey:key];
+		return true;
 	}
 
 	return false;
