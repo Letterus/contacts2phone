@@ -12,18 +12,13 @@
 #import "Service/C2PEvolutionDataService.h"
 #import <ObjFW/ObjFW.h>
 
-@interface C2PApplication: OFObject <OFApplicationDelegate>
-@end
-
-OF_APPLICATION_DELEGATE(C2PApplication)
-
 static void
 c2p_usage()
 {
 	[OFStdOut writeLine:@"Usage:"];
+	[OFStdOut writeFormat:@"%@ [-l|--list]\n", [OFApplication programName]];
 	[OFStdOut
-	    writeFormat:@"%@ [-l|--list]\n", [OFApplication programName]];
-	[OFStdOut writeLine:@"\t[-s \"Addressbook Display Name\"|--select=\"Addressbook Display Name\""];
+	    writeLine:@"\t[-s \"Addressbook Display Name\"|--select=\"Addressbook Display Name\""];
 	[OFStdOut writeLine:@"\t-u http://host|--upload-to-host=http://host"];
 	[OFStdOut writeLine:@"\t-n username|--username=username]\n"];
 }
@@ -40,8 +35,51 @@ c2p_list(C2PEvolutionDataService *evolutionService)
 	}
 }
 
-static void
-c2p_select(C2PEvolutionDataService *evolutionService, OFString *addressbookDisplayName)
+@interface C2PApplication: OFObject <OFApplicationDelegate>
+
+@property (nonatomic, retain) OFString *selectedDisplayName;
+@property (nonatomic, retain) C2PIpPhoneDirectory *phoneDirectory;
+@property (nonatomic, retain) OFIRI *phoneBaseIRI;
+@property (nonatomic, retain) OFString *username;
+
+- (C2PIpPhoneDirectory *)phoneDirectoryForBookWithDisplayName:(OFString *)displayName
+                                     fromEvolutionDataService:
+                                         (C2PEvolutionDataService *)evolutionService;
+
+- (void)upload;
+- (void)applicationDidFinishLaunching:(OFNotification *)notification;
+
+@end
+
+OF_APPLICATION_DELEGATE(C2PApplication)
+
+@implementation C2PApplication
+
+- (instancetype)init
+{
+	self = [super init];
+
+	_selectedDisplayName = nil;
+	_phoneDirectory = nil;
+	_phoneBaseIRI = nil;
+	_username = nil;
+
+	return self;
+}
+
+- (void)dealloc
+{
+	[_selectedDisplayName release];
+	[_phoneDirectory release];
+	[_phoneBaseIRI release];
+	[_username release];
+
+	[super dealloc];
+}
+
+- (C2PIpPhoneDirectory *)phoneDirectoryForBookWithDisplayName:(OFString *)displayName
+                                     fromEvolutionDataService:
+                                         (C2PEvolutionDataService *)evolutionService
 {
 	GList *entry, *addressbookList = [evolutionService addressbookSources];
 	ESource *selectedAddressBook = NULL;
@@ -49,8 +87,7 @@ c2p_select(C2PEvolutionDataService *evolutionService, OFString *addressbookDispl
 	for (entry = addressbookList; entry; entry = entry->next) {
 		ESource *addressbook = E_SOURCE(entry->data);
 
-		if (strcmp(e_source_get_display_name(addressbook),
-		        addressbookDisplayName.UTF8String) == 0) {
+		if (strcmp(e_source_get_display_name(addressbook), displayName.UTF8String) == 0) {
 			selectedAddressBook = addressbook;
 			break;
 		}
@@ -58,7 +95,7 @@ c2p_select(C2PEvolutionDataService *evolutionService, OFString *addressbookDispl
 
 	if (selectedAddressBook == NULL) {
 		// TODO: Throw exception
-		OFLog(@"Addressbook with name \"%@\" not found.", addressbookDisplayName);
+		OFLog(@"Addressbook with name \"%@\" not found.", displayName);
 		[OFApplication terminateWithStatus:EXIT_FAILURE];
 	}
 
@@ -66,46 +103,80 @@ c2p_select(C2PEvolutionDataService *evolutionService, OFString *addressbookDispl
 	GSList *contacts = [evolutionService contactsFromAddressbookSource:selectedAddressBook];
 
 	[phoneDirectory importFromEvolutionBook:contacts];
-	[OFStdOut writeString:phoneDirectory.stringBySerializing];
 
 	g_slist_free_full(contacts, g_object_unref);
-	[phoneDirectory release];
+	return phoneDirectory;
 }
 
-@implementation C2PApplication
+- (void)upload {
+	
+}
+
 - (void)applicationDidFinishLaunching:(OFNotification *)notification
 {
-	OFString *displayName, *uploadURI, *userName;
 	const OFOptionsParserOption options[] = {{'l', @"list", 0, NULL, NULL},
-	    {'s', @"select", 1, NULL, &displayName}, {'u', @"upload-to-host", 1, NULL, &uploadURI},
-	    {'n', @"username", 1, NULL, &userName}, {'h', @"help", 0, NULL, NULL},
+	    {'s', @"select", 1, NULL, NULL}, {'u', @"upload-to-host", 1, NULL, NULL},
+	    {'n', @"username", 1, NULL, NULL}, {'h', @"help", 0, NULL, NULL},
 	    {'\0', @"version", 0, NULL, NULL}, {'\0', nil, 0, NULL, NULL}};
 
 	OFUnichar option;
 	OFOptionsParser *optionsParser;
-	OFArray OF_GENERIC(OFString *) * remainingArguments;
 
 	C2PEvolutionDataService *evolutionService = [[C2PEvolutionDataService alloc] init];
 
-	optionsParser = [OFOptionsParser parserWithOptions:options];
-	remainingArguments = optionsParser.remainingArguments;
-	while ((option = [optionsParser nextOption]) != '\0') {
-		switch (option) {
-		case 'l':
-			c2p_list(evolutionService);
-			break;
-		case 's':
-			c2p_select(evolutionService, displayName);
-			break;
-		default:
-		case 'h':
-			c2p_usage();
-			break;
+	@try {
+
+		optionsParser = [OFOptionsParser parserWithOptions:options];
+		while ((option = [optionsParser nextOption]) != '\0') {
+			switch (option) {
+			case 'l':
+				c2p_list(evolutionService);
+				[evolutionService release];
+				[OFApplication terminate];
+				break;
+			case 's':
+				self.selectedDisplayName = optionsParser.argument;
+				break;
+			case 'u':
+				self.phoneBaseIRI = [OFIRI IRIWithString:optionsParser.argument];
+				break;
+			case 'n':
+				self.username = optionsParser.argument;
+				break;
+			default:
+			case 'h':
+				c2p_usage();
+				[evolutionService release];
+				[OFApplication terminate];
+				break;
+			}
 		}
+
+		if (self.selectedDisplayName != nil) {
+			self.phoneDirectory =
+			    [self phoneDirectoryForBookWithDisplayName:self.selectedDisplayName
+			                      fromEvolutionDataService:evolutionService];
+		}
+
+		if (self.phoneBaseIRI) {
+			if (!self.username) {
+				OFLog(@"Missing username for upload.");  // TODO: throw exception
+				[OFApplication terminateWithStatus:EXIT_FAILURE];
+			}
+
+			[self upload];
+			[evolutionService release];
+			[OFApplication terminateWithStatus:EXIT_SUCCESS];
+		}
+
+		[OFStdOut writeString:self.phoneDirectory.stringBySerializing];
+
+	} @catch (id e *) {
+		[evolutionService release];
+		@throw e;
 	}
 
 	[evolutionService release];
 	[OFApplication terminateWithStatus:EXIT_SUCCESS];
 }
-
 @end
