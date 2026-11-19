@@ -102,7 +102,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 		[OFApplication terminateWithStatus:EXIT_FAILURE];
 	}
 
-	C2PIpPhoneDirectory *phoneDirectory = [[C2PIpPhoneDirectory alloc] init];
+	C2PIpPhoneDirectory *phoneDirectory = [[[C2PIpPhoneDirectory alloc] init] autorelease];
 	GSList *contacts = [evolutionService contactsFromAddressbookSource:selectedAddressBook];
 
 	[phoneDirectory importFromEvolutionBook:contacts];
