@@ -113,6 +113,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	[phoneDirectory importFromEvolutionBook:contacts];
 
 	g_slist_free_full(contacts, g_object_unref);
+	g_object_unref(selectedAddressBook);
 	return phoneDirectory;
 }
 
