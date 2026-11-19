@@ -13,6 +13,9 @@
 
 @implementation C2PEvolutionDataService
 
+/**
+ *  TODO: Doc - return: ownership transfered
+ */
 - (GList *)addressbookSources
 {
 	GError *error = NULL;
@@ -28,6 +31,9 @@
 	return e_source_registry_list_sources(registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
 }
 
+/**
+ *  TODO: Doc - return: ownership transfered
+ */
 - (GSList *)contactsFromAddressbookSource:(ESource *)addressbook
 {
 	GSList *contacts;

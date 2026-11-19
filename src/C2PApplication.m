@@ -33,6 +33,8 @@ c2p_list(C2PEvolutionDataService *evolutionService)
 		ESource *addressbook = E_SOURCE(entry->data);
 		[OFStdOut writeFormat:@"\t- %s\n", e_source_get_display_name(addressbook)];
 	}
+
+	g_list_free_full (addressbookList, g_object_unref);
 }
 
 @interface C2PApplication: OFObject <OFApplicationDelegate, OFHTTPClientDelegate>
@@ -95,6 +97,9 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 			break;
 		}
 	}
+
+	g_object_ref(selectedAddressBook);
+	g_list_free_full (addressbookList, g_object_unref);
 
 	if (selectedAddressBook == NULL) {
 		// TODO: Throw exception
