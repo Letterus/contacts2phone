@@ -10,6 +10,7 @@
 // #import "Controller/GTK/C2PGTKAppController.h"
 #import "Model/C2PIpPhoneDirectory.h"
 #import "Service/C2PEvolutionDataService.h"
+#import "Service/C2PUploadService.h"
 #import <ObjFW/ObjFW.h>
 
 static void
@@ -34,22 +35,19 @@ c2p_list(C2PEvolutionDataService *evolutionService)
 		[OFStdOut writeFormat:@"\t- %s\n", e_source_get_display_name(addressbook)];
 	}
 
-	g_list_free_full (addressbookList, g_object_unref);
+	g_list_free_full(addressbookList, g_object_unref);
 }
 
-@interface C2PApplication: OFObject <OFApplicationDelegate, OFHTTPClientDelegate>
+@interface C2PApplication: OFObject <OFApplicationDelegate>
 
 @property (nonatomic, retain) OFString *selectedDisplayName;
 @property (nonatomic, retain) OFString *phoneDirectory;
-@property (nonatomic, retain) OFIRI *phoneBaseIRI;
-@property (nonatomic, retain) OFString *username;
-@property (nonatomic, retain) OFString *password;
+@property (nonatomic, retain) C2PUploadService *uploadService;
 
 - (C2PIpPhoneDirectory *)phoneDirectoryForBookWithDisplayName:(OFString *)displayName
                                      fromEvolutionDataService:
                                          (C2PEvolutionDataService *)evolutionService;
 
-- (void)upload;
 - (void)applicationDidFinishLaunching:(OFNotification *)notification;
 
 @end
@@ -64,9 +62,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 
 	_selectedDisplayName = nil;
 	_phoneDirectory = nil;
-	_phoneBaseIRI = nil;
-	_username = nil;
-	_password = nil;
+	_uploadService = [[C2PUploadService alloc] init];
 
 	return self;
 }
@@ -75,9 +71,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 {
 	[_selectedDisplayName release];
 	[_phoneDirectory release];
-	[_phoneBaseIRI release];
-	[_username release];
-	[_password release];
+	[_uploadService release];
 
 	[super dealloc];
 }
@@ -99,7 +93,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	}
 
 	g_object_ref(selectedAddressBook);
-	g_list_free_full (addressbookList, g_object_unref);
+	g_list_free_full(addressbookList, g_object_unref);
 
 	if (selectedAddressBook == NULL) {
 		// TODO: Throw exception
@@ -115,61 +109,6 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	g_slist_free_full(contacts, g_object_unref);
 	g_object_unref(selectedAddressBook);
 	return phoneDirectory;
-}
-
-- (void)upload
-{
-	OFHTTPClient *httpClient = [OFHTTPClient client];
-	[httpClient setDelegate:self];
-
-	OFIRI *uploadIRI = [self.phoneBaseIRI IRIByAppendingPathComponent:@"UploadFile.html"
-	                                                      isDirectory:false];
-
-	OFString *credentials = [OFString stringWithFormat:@"%@:%@", self.username, self.password];
-	OFData *credentialData = [credentials dataWithEncoding:OFStringEncodingUTF8];
-
-	OFString *basicAuthHeader =
-	    [OFString stringWithFormat:@"Basic %@", credentialData.stringByBase64Encoding];
-
-	OFMutableString *body = [OFMutableString stringWithString:@"\n--ofhttpclientdelimiter\n"];
-	[body appendString:@"Content-Disposition: form-data; name=\"Directory\"; "
-	                   @"filename=\"directory.xml\"\n"];
-	[body appendString:@"Content-Type: application/xml\n\n"];
-	[body appendString:self.phoneDirectory];
-	[body appendString:@"\n--ofhttpclientdelimiter\n"];
-	[body appendString:@"Content-Disposition: form-data; name=\"DST_PHB\";\n\n"];
-	[body appendString:@"0\n"];
-	[body appendString:@"--ofhttpclientdelimiter\n"];
-	[body appendString:@"Content-Disposition: form-data; name=\"HttpRedirectUrl\";\n\n"];
-	[body appendString:@"ContactList.html"];
-	[body appendString:@"\n--ofhttpclientdelimiter--"];
-
-	OFData *bodyData = [body dataWithEncoding:OFStringEncodingUTF8];
-	OFString *contentLengthValue = [OFString stringWithFormat:@"%llu", bodyData.count];
-
-	OFLog(@"Content-Length: %@", contentLengthValue);
-
-	OFHTTPRequest *request = [OFHTTPRequest requestWithIRI:uploadIRI];
-	[request setHeaders:@{
-		@"User-Agent" : @"OFHTTPClient",
-		@"Accept" : @"text/html,application/xhtml+xml,application",
-		@"Authorization" : basicAuthHeader,
-		@"Content-Type" : @"multipart/form-data;boundary=ofhttpclientdelimiter",
-		@"Content-Length" : contentLengthValue
-	}];
-	[request setMethod:OFHTTPRequestMethodPost];
-	request.body = bodyData;
-
-	[httpClient performRequest:request];
-}
-
-- (void)client:(nonnull OFHTTPClient *)client
-    didPerformRequest:(nonnull OFHTTPRequest *)request
-             response:(nullable OFHTTPResponse *)response
-            exception:(nullable id)exception
-{
-	OFLog(@"Response headers are %@", response.headers);
-	OFLog(@"Response is %@", response.readString);
 }
 
 - (void)applicationDidFinishLaunching:(OFNotification *)notification
@@ -199,13 +138,14 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 			self.selectedDisplayName = optionsParser.argument;
 			break;
 		case 'u':
-			self.phoneBaseIRI = [OFIRI IRIWithString:optionsParser.argument];
+			self.uploadService.phoneBaseIRI =
+			    [OFIRI IRIWithString:optionsParser.argument];
 			break;
 		case 'n':
-			self.username = optionsParser.argument;
+			self.uploadService.username = optionsParser.argument;
 			break;
 		case 'p':
-			self.password = optionsParser.argument;
+			self.uploadService.password = optionsParser.argument;
 			break;
 		default:
 		case 'h':
@@ -223,25 +163,23 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 		        .stringBySerializing;
 	}
 
-	if (self.phoneBaseIRI) {
-		if (!self.username) {
-			OFLog(@"Missing username for upload.");  // TODO: throw exception
+	if (self.uploadService.phoneBaseIRI) {
+
+		@try {
+			[self.uploadService upload:self.phoneDirectory];
+		} @catch (id e) {
+			// TODO: Print Exception description
+			[evolutionService release];
 			[OFApplication terminateWithStatus:EXIT_FAILURE];
 		}
 
-		if (!self.password) {
-			OFLog(@"Missing password for upload.");  // TODO: throw exception
-			[OFApplication terminateWithStatus:EXIT_FAILURE];
-		}
-
-		[self upload];
 		[evolutionService release];
 		[OFApplication terminateWithStatus:EXIT_SUCCESS];
 	}
 
 	[OFStdOut writeString:self.phoneDirectory];
 
-	// } @catch (id e *) {
+	// } @catch (id e) {
 	// 	[evolutionService release];
 	// 	@throw e;
 	// }
