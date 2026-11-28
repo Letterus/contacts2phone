@@ -17,6 +17,34 @@ Options:
 - `-s "Addressbook Display Name"|--select="Addressbook Display Name"` Select an addressbook by its displayname to process it as XML. If you don't specify `-u` it will print the XML file to StdOut. Use the `>` operator to save it to a file.
 - `-u`, `-p`, `-n` are work in progress currently.
 
+## Current workaround
+
+### Upload XML as long as that's not implemented
+
+Use curl:
+
+` ./contacts2phone -s "Addressbook" | curl -i -X POST -u <adminuser> -F "Directory=@-" http://<ip address>/UploadFile.html`
+
+Replace `<adminuser>` and `<ip address>` by your local values. Hit return.
+
+Insert your admin password. You should see HTML output telling you the settings were saved.
+
+### Storing the password
+
+Use `secret-tool` to store the password in GNOME keyring (Debian/Ubuntu package: `libsecret-tools`):
+
+`secret-tool store --label "SNOM Phone Base" host <ip address> user <adminuser>`
+
+### Use the password
+
+Get it like this:
+
+`secret-tool lookup host <ip address> user <adminuser>`
+
+Use it with curl:
+
+`./contacts2phone -s "Addressbook" | curl -i -X POST -u "<adminuser>:$(secret-tool lookup host <ip address> user <adminuser>)" -F "Directory=@-" http://<ip address>/UploadFile.html`
+
 ## Build dependencies
 
 See [meson file](meson.build).
