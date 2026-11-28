@@ -129,6 +129,13 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	@try {
 
 		optionsParser = [OFOptionsParser parserWithOptions:options];
+
+		if (!optionsParser.remainingArguments.count) {
+			c2p_usage();
+			[evolutionService release];
+			[OFApplication terminate];
+		}
+
 		while ((option = [optionsParser nextOption]) != '\0') {
 			switch (option) {
 			case 'l':
