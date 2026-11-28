@@ -8,7 +8,7 @@
  */
 
 #import "C2PIpPhoneDirectoryEntry.h"
-#import "../Exception/C2PEDSException.h"
+#import "../Exception/C2PInvalidEntryException.h"
 
 @implementation C2PIpPhoneDirectoryEntry
 
@@ -55,7 +55,7 @@
 	} else if ([self isValidNameField:fullname]) {
 		self.name = fullname;
 	} else {
-		@throw [C2PEDSException exceptionWithDescription:@"Name fields are empty."];
+		@throw [C2PInvalidEntryException exceptionWithDescription:@"Name fields are empty."];
 	}
 	return self;
 }
@@ -76,7 +76,7 @@
 	}
 
 	if (!gotTelephone)
-		@throw [C2PEDSException exceptionWithDescription:@"Found no phone number."];
+		@throw [C2PInvalidEntryException exceptionWithDescription:@"Found no phone number."];
 
 	return self;
 }

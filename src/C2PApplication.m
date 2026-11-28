@@ -96,11 +96,12 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	g_object_ref(selectedAddressBook);
 	g_list_free_full(addressbookList, g_object_unref);
 
-	if (selectedAddressBook == NULL) {
-		// TODO: Throw exception
-		OFLog(@"Addressbook with name \"%@\" not found.", displayName);
-		[OFApplication terminateWithStatus:EXIT_FAILURE];
-	}
+	if (selectedAddressBook == NULL)
+		@throw [C2PDescriptionException
+		    exceptionWithDescription:
+		        [OFString
+		            stringWithFormat:@"Addressbook with displayname \"%@\" not found.",
+		            displayName]];
 
 	C2PIpPhoneDirectory *phoneDirectory = [[[C2PIpPhoneDirectory alloc] init] autorelease];
 	GSList *contacts = [evolutionService contactsFromAddressbookSource:selectedAddressBook];
@@ -185,6 +186,13 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 		}
 
 		[OFStdOut writeString:self.phoneDirectory];
+
+	} @catch (C2PDescriptionException *de) {
+		[OFStdErr writeString:[OFString stringWithFormat:@"Process failed, exception "
+		                                                 @"with error message: %@\n",
+		                                de.description]];
+		[evolutionService release];
+		[OFApplication terminateWithStatus:EXIT_FAILURE];
 
 	} @catch (id e) {
 		[evolutionService release];

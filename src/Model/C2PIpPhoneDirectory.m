@@ -8,7 +8,7 @@
  */
 
 #import "C2PIpPhoneDirectory.h"
-#import "../Exception/C2PEDSException.h"
+#import "../Exception/C2PInvalidEntryException.h"
 #import "C2PIpPhoneDirectoryEntry.h"
 #include <libebook-contacts/libebook-contacts.h>
 #include <libebook/libebook.h>
@@ -66,14 +66,12 @@
 				[newEntry setTelephoneValuesForKeysWithDictionary:keyValueMapping
 				                             fromEvolutionContact:econtact];
 
-			// TODO: Make new C2PInvalidEntryException
-			} @catch (C2PEDSException *e) {
+			} @catch (C2PInvalidEntryException *e) {
 				[newEntry release];
 				continue;
 			}
 
 			[self.entries addObject:newEntry];
-
 			// OFLog(@"Added to Directory Entry: %@", [newEntry description]);
 
 			[newEntry release];
