@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 #import "C2PUploadService.h"
+#import "../Exception/C2PUploadException.h"
 
 @implementation C2PUploadService
 @synthesize phoneBaseIRI = _phoneBaseIRI;
@@ -24,15 +25,11 @@
 
 - (void)upload:(OFString *)xmlPhoneDirectory
 {
-	if (!self.username) {
-		OFLog(@"Missing username for upload.");  
-		[OFApplication terminateWithStatus:EXIT_FAILURE]; // TODO: throw UploadException instead
-	}
+	if (!self.username)
+		@throw [C2PUploadException exceptionWithDescription:@"Missing username for upload."];
 
-	if (!self.password) {
-		OFLog(@"Missing password for upload.");
-		[OFApplication terminateWithStatus:EXIT_FAILURE]; // TODO: throw UploadException instead
-	}
+	if (!self.password)
+		@throw [C2PUploadException exceptionWithDescription:@"Missing password for upload."];
 
 	OFHTTPClient *httpClient = [OFHTTPClient client];
 	[httpClient setDelegate:self];

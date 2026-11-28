@@ -22,7 +22,7 @@
 	ESourceRegistry *registry = e_source_registry_new_sync(NULL, &error);
 
 	if (error != NULL) {
-		@throw [C2PDescriptionException
+		@throw [C2PEDSException
 		    exceptionWithDescription:
 		        [OFString stringWithFormat:@"Failed to create a source registry: %s\n",
 		                  error->message]];
@@ -43,7 +43,7 @@
 	    addressbook, /* timeout */ 1, /* cancellable */ NULL, &error));
 
 	if (error != NULL) {
-		@throw [C2PDescriptionException
+		@throw [C2PEDSException
 		    exceptionWithDescription:
 		        [OFString
 		            stringWithFormat:@"Failed to connect to EBook: %s\n", error->message]];
@@ -53,7 +53,7 @@
 	    client, /* sexp */ "", &contacts, /* cancellable */ NULL, &error);
 
 	if (error != NULL) {
-		@throw [C2PDescriptionException
+		@throw [C2PEDSException
 		    exceptionWithDescription:[OFString
 		                                 stringWithFormat:@"Failed to get contacts: %s\n",
 		                                 error->message]];

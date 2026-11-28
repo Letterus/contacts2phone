@@ -8,6 +8,7 @@
  */
 
 // #import "Controller/GTK/C2PGTKAppController.h"
+#import "Exception/C2PUploadException.h"
 #import "Model/C2PIpPhoneDirectory.h"
 #import "Service/C2PEvolutionDataService.h"
 #import "Service/C2PUploadService.h"
@@ -124,65 +125,71 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 
 	C2PEvolutionDataService *evolutionService = [[C2PEvolutionDataService alloc] init];
 
-	//@try {
+	@try {
 
-	optionsParser = [OFOptionsParser parserWithOptions:options];
-	while ((option = [optionsParser nextOption]) != '\0') {
-		switch (option) {
-		case 'l':
-			c2p_list(evolutionService);
-			[evolutionService release];
-			[OFApplication terminate];
-			break;
-		case 's':
-			self.selectedDisplayName = optionsParser.argument;
-			break;
-		case 'u':
-			self.uploadService.phoneBaseIRI =
-			    [OFIRI IRIWithString:optionsParser.argument];
-			break;
-		case 'n':
-			self.uploadService.username = optionsParser.argument;
-			break;
-		case 'p':
-			self.uploadService.password = optionsParser.argument;
-			break;
-		default:
-		case 'h':
-			c2p_usage();
-			[evolutionService release];
-			[OFApplication terminate];
-			break;
-		}
-	}
-
-	if (self.selectedDisplayName != nil) {
-		self.phoneDirectory =
-		    [self phoneDirectoryForBookWithDisplayName:self.selectedDisplayName
-		                      fromEvolutionDataService:evolutionService]
-		        .stringBySerializing;
-	}
-
-	if (self.uploadService.phoneBaseIRI) {
-
-		@try {
-			[self.uploadService upload:self.phoneDirectory];
-		} @catch (id e) {
-			// TODO: Print Exception description
-			[evolutionService release];
-			[OFApplication terminateWithStatus:EXIT_FAILURE];
+		optionsParser = [OFOptionsParser parserWithOptions:options];
+		while ((option = [optionsParser nextOption]) != '\0') {
+			switch (option) {
+			case 'l':
+				c2p_list(evolutionService);
+				[evolutionService release];
+				[OFApplication terminate];
+				break;
+			case 's':
+				self.selectedDisplayName = optionsParser.argument;
+				break;
+			case 'u':
+				self.uploadService.phoneBaseIRI =
+				    [OFIRI IRIWithString:optionsParser.argument];
+				break;
+			case 'n':
+				self.uploadService.username = optionsParser.argument;
+				break;
+			case 'p':
+				self.uploadService.password = optionsParser.argument;
+				break;
+			default:
+			case 'h':
+				c2p_usage();
+				[evolutionService release];
+				[OFApplication terminate];
+				break;
+			}
 		}
 
+		if (self.selectedDisplayName != nil) {
+			self.phoneDirectory =
+			    [self phoneDirectoryForBookWithDisplayName:self.selectedDisplayName
+			                      fromEvolutionDataService:evolutionService]
+			        .stringBySerializing;
+		}
+
+		if (self.uploadService.phoneBaseIRI) {
+
+			@try {
+
+				[self.uploadService upload:self.phoneDirectory];
+
+			} @catch (C2PUploadException *e) {
+				[OFStdErr
+				    writeString:[OFString
+				                    stringWithFormat:@"Upload failed, exception "
+				                                     @"with error message: %@\n",
+				                    e.description]];
+				[evolutionService release];
+				[OFApplication terminateWithStatus:EXIT_FAILURE];
+			}
+
+			[evolutionService release];
+			[OFApplication terminateWithStatus:EXIT_SUCCESS];
+		}
+
+		[OFStdOut writeString:self.phoneDirectory];
+
+	} @catch (id e) {
 		[evolutionService release];
-		[OFApplication terminateWithStatus:EXIT_SUCCESS];
+		@throw e;
 	}
-
-	[OFStdOut writeString:self.phoneDirectory];
-
-	// } @catch (id e) {
-	// 	[evolutionService release];
-	// 	@throw e;
-	// }
 
 	[evolutionService release];
 	[OFApplication terminateWithStatus:EXIT_SUCCESS];
