@@ -14,7 +14,7 @@
 - (OFString *)description
 {
 	return [OFString
-	    stringWithFormat:@"Evolution Data Server reports error: %@",
+	    stringWithFormat:@"Evolution Data Service reports error. %@",
 	    [super description]];
 }
 @end

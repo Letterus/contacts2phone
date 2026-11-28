@@ -6,18 +6,12 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-
-#import <OGEBook/OGEBook-Umbrella.h>
-#import <OGEBookContacts/OGEBookContacts-Umbrella.h>
 #import <ObjFW/ObjFW.h>
+#include <glib.h>
 
 OF_ASSUME_NONNULL_BEGIN
 
 @interface C2PIpPhoneDirectory: OFObject
-{
-	OFCharacterSet *_allowedCharsInPhoneNumber;
-	OFCharacterSet *_cleanNumberCharsToKeep;
-}
 
 @property (retain, nonatomic) OFMutableArray *entries;
 
@@ -27,7 +21,6 @@ OF_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) OFXMLElement *XMLElementBySerializing;
 
 - (OFString *)stringBySerializing;
-
 - (void)importFromEvolutionBook:(GSList *)evolutionContacts;
 
 @end

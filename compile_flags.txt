@@ -19,3 +19,4 @@
 -I/usr/include/glib-2.0
 -I/usr/lib/glib-2.0/include
 -I/usr/include/evolution-data-server
+-I/usr/include/gtk-4.0
