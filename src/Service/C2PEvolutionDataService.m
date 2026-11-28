@@ -14,7 +14,9 @@
 @implementation C2PEvolutionDataService
 
 /**
- *  TODO: Doc - return: ownership transfered
+ *
+ * @return A `GList` of addressbook sources as returned by `e_source_registry_list_sources`.
+ * Ownership is transferred to the caller. The list needs to be freed with `g_list_free_full` f.e.
  */
 - (GList *)addressbookSources
 {
@@ -32,7 +34,9 @@
 }
 
 /**
- *  TODO: Doc - return: ownership transfered
+ *
+ * @return A `GSList` of `EContact` as returned by `e_book_client_get_contacts_sync`.
+ * Ownership is transferred to the caller. The list needs to be freed with `g_slist_free_full` f.e.
  */
 - (GSList *)contactsFromAddressbookSource:(ESource *)addressbook
 {
