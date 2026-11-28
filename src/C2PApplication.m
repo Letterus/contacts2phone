@@ -43,6 +43,7 @@ c2p_list(C2PEvolutionDataService *evolutionService)
 
 @property (nonatomic, retain) OFString *selectedDisplayName;
 @property (nonatomic, retain) OFString *phoneDirectory;
+@property (nonatomic, retain) C2PEvolutionDataService *evolutionService;
 @property (nonatomic, retain) C2PUploadService *uploadService;
 
 - (C2PIpPhoneDirectory *)phoneDirectoryForBookWithDisplayName:(OFString *)displayName
@@ -61,9 +62,15 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 {
 	self = [super init];
 
-	_selectedDisplayName = nil;
-	_phoneDirectory = nil;
-	_uploadService = [[C2PUploadService alloc] init];
+	@try {
+		_selectedDisplayName = nil;
+		_phoneDirectory = nil;
+		_evolutionService = [[C2PEvolutionDataService alloc] init];
+		_uploadService = [[C2PUploadService alloc] init];
+	} @catch (id e) {
+		[self release];
+		@throw e;
+	}
 
 	return self;
 }
@@ -72,6 +79,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 {
 	[_selectedDisplayName release];
 	[_phoneDirectory release];
+	[_evolutionService release];
 	[_uploadService release];
 
 	[super dealloc];
@@ -124,23 +132,19 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 	OFUnichar option;
 	OFOptionsParser *optionsParser;
 
-	C2PEvolutionDataService *evolutionService = [[C2PEvolutionDataService alloc] init];
-
 	@try {
 
 		optionsParser = [OFOptionsParser parserWithOptions:options];
 
 		if (!optionsParser.remainingArguments.count) {
 			c2p_usage();
-			[evolutionService release];
 			[OFApplication terminate];
 		}
 
 		while ((option = [optionsParser nextOption]) != '\0') {
 			switch (option) {
 			case 'l':
-				c2p_list(evolutionService);
-				[evolutionService release];
+				c2p_list(self.evolutionService);
 				[OFApplication terminate];
 				break;
 			case 's':
@@ -159,7 +163,6 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 			default:
 			case 'h':
 				c2p_usage();
-				[evolutionService release];
 				[OFApplication terminate];
 				break;
 			}
@@ -167,7 +170,7 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 
 		self.phoneDirectory =
 		    [self phoneDirectoryForBookWithDisplayName:self.selectedDisplayName
-		                      fromEvolutionDataService:evolutionService]
+		                      fromEvolutionDataService:self.evolutionService]
 		        .stringBySerializing;
 
 		if (self.uploadService.phoneBaseIRI) {
@@ -182,11 +185,9 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 				                    stringWithFormat:@"Upload failed, exception "
 				                                     @"with error message: %@\n",
 				                    e.description]];
-				[evolutionService release];
 				[OFApplication terminateWithStatus:EXIT_FAILURE];
 			}
 
-			[evolutionService release];
 			[OFApplication terminateWithStatus:EXIT_SUCCESS];
 		}
 
@@ -196,15 +197,10 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 		[OFStdErr writeString:[OFString stringWithFormat:@"Process failed, exception "
 		                                                 @"with error message: %@\n",
 		                                de.description]];
-		[evolutionService release];
 		[OFApplication terminateWithStatus:EXIT_FAILURE];
 
-	} @catch (id e) {
-		[evolutionService release];
-		@throw e;
 	}
 
-	[evolutionService release];
 	[OFApplication terminateWithStatus:EXIT_SUCCESS];
 }
 
