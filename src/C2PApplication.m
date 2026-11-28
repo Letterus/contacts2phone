@@ -165,12 +165,10 @@ OF_APPLICATION_DELEGATE(C2PApplication)
 			}
 		}
 
-		if (self.selectedDisplayName != nil) {
-			self.phoneDirectory =
-			    [self phoneDirectoryForBookWithDisplayName:self.selectedDisplayName
-			                      fromEvolutionDataService:evolutionService]
-			        .stringBySerializing;
-		}
+		self.phoneDirectory =
+		    [self phoneDirectoryForBookWithDisplayName:self.selectedDisplayName
+		                      fromEvolutionDataService:evolutionService]
+		        .stringBySerializing;
 
 		if (self.uploadService.phoneBaseIRI) {
 
